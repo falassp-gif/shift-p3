@@ -1,0 +1,33 @@
+{
+ "name": "Shift P3 \u2014 Maintenance & Tooling",
+ "short_name": "Shift P3",
+ "description": "Jadwal shift Maintenance & Tooling Plant 3",
+ "id": "./",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "any",
+ "background_color": "#0f1a4a",
+ "theme_color": "#16245e",
+ "lang": "id",
+ "icons": [
+  {
+   "src": "icons/icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "icons/icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "icons/maskable-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ]
+}
