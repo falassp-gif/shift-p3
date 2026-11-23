@@ -426,6 +426,12 @@ td.c.dz-on{background:rgba(43,78,167,.18);box-shadow:inset 0 0 0 2px var(--blue)
 .gpick button.on{background:var(--navy-900);border-color:var(--navy-900);color:#fff}
 .gt-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
 .gt-grid div{background:#f5f6fa;border-radius:12px;padding:8px;text-align:center} .gt-grid small{display:block;color:var(--ink-3);font-size:11.5px} .gt-grid b{font-size:13.5px}
+/* ---- v0.6 ---- */
+.nm.P{background:var(--st-L);border-color:transparent}
+.swap-box{display:flex;gap:8px;align-items:flex-start;margin:8px 0 2px;padding:9px 11px;border-radius:12px;background:#eef3ff;color:#23367a;font-size:13px;line-height:1.45}
+.swap-box svg{flex:none;margin-top:2px}
+.opt-grid button:disabled{opacity:.4}
+.rqb.sw{background:#2b4ea7}
 
 </style>
 </head>
@@ -486,6 +492,7 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
     file: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/>',
     bell: '<path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/>',
     send: '<path d="M21 3L10 14"/><path d="M21 3l-7 18-4-7-7-4z"/>', history: '<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/>',
+    swap: '<path d="M4 8h14l-4-4"/><path d="M20 16H6l4 4"/>',
     moon: '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',
     warn: '<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/>', share: '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/>'
   };
@@ -514,10 +521,15 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
   const isLeader = m => !!m && ["SL", "AM"].includes(m.tim);
   const isGrup = m => isLeader(m) && m.modeSabtu === "Grup" && GRUP.includes(m.grupSabtu);
   const satTurn = ds => GRUP[(((Math.round((parse(ds) - parse(SAT_BASE)) / 6048e5)) % 4) + 4) % 4];
+  // Sabtu jam normal 5 jam + lembur 3 jam sesuai shift: leader mode Normal, Admin, Foreman gudang (bukan AM, bukan operator, bukan grup)
+  const sat3 = m => !!m && !isOp(m) && m.tim !== "AM" && !/operator/i.test(m.jabatan || "") && !isGrup(m);
+  const OT3 = ["12.30–15.30", "17.30–20.30", "22.30–01.30"];
   function hours(ds, a, m) {
     if (!a) return "";
     const sat = dow(parse(ds)) === 5;
     if (sat && isGrup(m) && a.st !== "O" && a.st !== "C") return "07.00–15.00";
+    if (sat && a.st === "S" && sat3(m) && a.s <= 3) return HSAT[a.s - 1] + " + lembur " + OT3[a.s - 1];
+    if (a.st === "P") return H8[a.s - 1] + (a.s === 1 && !sat ? " + lembur 15.30–17.30" : "");
     if (a.s === 4) return HSAT[3];
     if (sat && !(a.st === "S" || (isOp(m) && a.st === "L"))) return HSAT[a.s - 1];
     return H8[a.s - 1] + (a.st === "L" && !sat ? (a.s === 1 ? " + LS 15.30–19.30" : a.s === 3 ? " + LS 19.30–23.30" : " + LS") : "");
@@ -527,6 +539,7 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
     if (a.st === "O") return { t: "OFF", c: "O" }; if (a.st === "C") return { t: "CUTI", c: "C" };
     if (a.s === 4) return { t: "S4", c: "k4" };
     if (a.st === "L") return { t: a.s + "+LS", c: "L" };
+    if (a.st === "P") return { t: a.s + "+2j", c: "L" };
     if (a.st === "S") return { t: "OT" + a.s, c: "S" };
     return { t: "S" + a.s, c: "k" + a.s };
   }
@@ -539,14 +552,18 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
     if (a.s === 4) return { v: 4, f: PAY.s4 };
     if (w === 5) return ((a.st === "S" && !isGrup(m)) || (isOp(m) && a.st === "L")) ? { v: a.s, f: PAY.ot } : { v: a.s, f: PAY.sat };
     if (a.st === "L") return { v: a.s === 1 ? 1 : 2, f: PAY.ls };
+    if (a.st === "P") return { v: 1, f: PAY.ls };
     return { v: a.s, f: null };
   }
-  const statusText = (a, ds) => !a ? "Belum dijadwalkan" : a.st === "O" ? (a.rq ? "Off (permintaan member)" : "Off") : a.st === "C" ? "Cuti / ijin" : a.s === 4 ? "Shift 4 normal (Sabtu)" : a.st === "S" ? `Shift ${a.s} · Overtime Sabtu 8 jam` : a.st === "L" ? `Shift ${a.s} + long shift` : (dow(parse(ds)) === 5 ? `Shift ${a.s} · Sabtu jam normal` : `Shift ${a.s}`);
+  const statusText = (a, ds, m) => !a ? "Belum dijadwalkan" : a.st === "O" ? (a.rq ? "Off (permintaan member)" : "Off") : a.st === "C" ? "Cuti / ijin" : a.s === 4 ? "Shift 4 normal (Sabtu)"
+    : a.st === "S" ? (m && sat3(m) ? `Shift ${a.s} · Sabtu 5 jam + lembur 3 jam` : m && isGrup(m) ? `Shift ${a.s} · Sabtu giliran grup` : `Shift ${a.s} · Overtime Sabtu 8 jam`)
+    : a.st === "L" ? `Shift ${a.s} + long shift` : a.st === "P" ? `Shift ${a.s} + lembur s/d 17.30`
+    : (dow(parse(ds)) === 5 ? (m && isGrup(m) ? `Shift ${a.s} · Sabtu giliran grup ${m.grupSabtu}` : `Shift ${a.s} · Sabtu jam normal`) : `Shift ${a.s}`);
   // jam mulai shift → untuk menentukan perubahan mendadak (< 24 jam)
   function startAt(ds, a, m) {
     if (!a || a.st === "O" || a.st === "C") return null;
     const sat = dow(parse(ds)) === 5; let hm;
-    if (sat && isGrup(m)) hm = [7, 0]; else if (a.s === 4) hm = [22, 30]; else if (sat && !(a.st === "S" || (isOp(m) && a.st === "L"))) hm = [[7, 30], [12, 30], [17, 30]][a.s - 1]; else hm = [[7, 30], [15, 30], [23, 30]][a.s - 1];
+    if (sat && isGrup(m)) hm = [7, 0]; else if (a.s === 4) hm = [22, 30]; else if (sat && (!(a.st === "S" || (isOp(m) && a.st === "L")) || (a.st === "S" && sat3(m)))) hm = [[7, 30], [12, 30], [17, 30]][a.s - 1]; else hm = [[7, 30], [15, 30], [23, 30]][a.s - 1];
     if (!hm) return null; const d = parse(ds); d.setHours(hm[0], hm[1]); return d;
   }
   function isUrgent(ds, oldA, newA, m) {
@@ -566,7 +583,7 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
   window.addEventListener("appinstalled", () => { installEvt = null; toast("Aplikasi Shift P3 terpasang di HP."); });
   const isStandalone = () => window.matchMedia && window.matchMedia("(display-mode: standalone)").matches || navigator.standalone;
   async function doInstall() { if (!installEvt) return installHelp(); installEvt.prompt(); try { await installEvt.userChoice; } catch (e) { } installEvt = null; }
-  const APP_VERSION = "0.5";
+  const APP_VERSION = "0.6";
   // versi baru (aplikasi terinstal): tampilkan ajakan memperbarui
   function showUpdateBar(apply) {
     if (document.getElementById("updBar")) return;
@@ -813,10 +830,10 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
       const it = { d: ds, u, a };
       if (a.st === "O") { add("off", it); continue; } if (a.st === "C") { add("cuti", it); continue; }
       add("work", it); if (a.s === 3) add("s3", it);
-      if (w < 5) { if (a.st === "L") { add("wd", it); add("ot", { ...it, t: "Hari biasa" }); } }
+      if (w < 5) { if (a.st === "L" || a.st === "P") { add("wd", it); add("ot", { ...it, t: "Hari biasa" }); } }
       else if (w === 5) { if ((isOp(m) && (a.st === "S" || a.st === "L")) || (a.st === "S" && !isGrup(m) && !isOp(m))) { add("sat", it); add("ot", { ...it, t: "Sabtu" }); } }
       else if (!sundayComp(ds, u)) { add("sun", it); add("ot", { ...it, t: "Minggu" }); }
-      else if (a.st === "L") { add("wd", it); add("ot", { ...it, t: "Hari biasa" }); }
+      else if (a.st === "L" || a.st === "P") { add("wd", it); add("ot", { ...it, t: "Hari biasa" }); }
     }
     return o;
   }
@@ -855,7 +872,7 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
     return `<div class="today-h"><button class="dnav" data-hd="-1" ${off <= 0 ? "disabled" : ""} aria-label="Hari sebelumnya">${ic("left", 18)}</button>
         <span class="dl"><b>Shift ${dayName(ds, off)}</b><small>${fmtShort(ds)}${dow(parse(ds)) === 6 ? " · Minggu digabung per area" : ""}</small></span>
         <button class="dnav" data-hd="1" ${off >= 6 ? "disabled" : ""} aria-label="Hari berikutnya">${ic("right", 18)}</button></div>
-      ${withMe ? `<div class="mine">Saya: ${esc(statusText(a, ds))}</div><div class="hrs">${a && a.st !== "O" && a.st !== "C" ? esc(hours(ds, a, st.byU[me])) + " WIB" : a ? "Selamat beristirahat" : "Jadwal belum diisi"}</div>` : ""}
+      ${withMe ? `<div class="mine">Saya: ${esc(statusText(a, ds, st.byU[me]))}</div><div class="hrs">${a && a.st !== "O" && a.st !== "C" ? esc(hours(ds, a, st.byU[me])) + " WIB" : a ? "Selamat beristirahat" : "Jadwal belum diisi"}</div>` : ""}
       <div class="grp-seg" role="tablist"><button data-gf="all" class="${f === "all" ? "on" : ""}">Semua</button><button data-gf="P3A" class="${f === "P3A" ? "on" : ""}"><i class="g-P3A"></i>P3A · ${cnt("P3A")}</button><button data-gf="P3B" class="${f === "P3B" ? "on" : ""}"><i class="g-P3B"></i>P3B · ${cnt("P3B")}</button></div>
       <div class="today-cols">${col(1)}${col(2)}${col(3)}</div>
       <div class="today-f"><button class="offln" data-sh="off">Off ${by.off.length} · Cuti ${by.cuti.length}${by.none.length ? ` · Belum diisi ${by.none.length}` : ""} ›</button><span class="dots" aria-hidden="true">${dots}</span></div>
@@ -889,14 +906,14 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
       $("#shBody", s).innerHTML = groups.map(([g, l]) => `<div class="sh-g"><h4><i class="g-${g}"></i>${GRP_NM[g]} <small>${l.length} orang</small></h4>
         ${l.map(x => { const b = A(ds, x.username), c = codeOf(b), t = TEAMS.find(t => t.id === x.tim);
           return `<div class="sh-r ${x.username === me ? "me" : ""}"><span class="code ${c.c}">${c.t}</span><span><b>${esc(x.surname)}${x.username === me ? " (saya)" : ""}</b><small>${esc(x.jabatan || "")}${t && t.title ? " · " + esc(cap(t.title.toLowerCase()).replace(/p3(a|b)/g, x => x.toUpperCase())) : ""}</small></span>
-            <span class="hr">${b && b.st !== "O" && b.st !== "C" ? esc(hours(ds, b, x)) : esc(statusText(b, ds))}</span></div>`; }).join("")}</div>`).join("") || `<div class="empty">Tidak ada orang di daftar ini.</div>`;
+            <span class="hr">${b && b.st !== "O" && b.st !== "C" ? esc(hours(ds, b, x)) : esc(statusText(b, ds, x))}</span></div>`; }).join("")}</div>`).join("") || `<div class="empty">Tidak ada orang di daftar ini.</div>`;
       $("#shSeg", s).querySelectorAll("[data-k]").forEach(b => b.onclick = () => paint(b.dataset.k));
     };
     paint(String(k));
   }
   function statSheet(key, agg, scopeTeam, pk) {
     const def = STAT_DEF.find(x => x[0] === key), items = agg.L[key] || [];
-    const row = it => { const c = codeOf(it.a); return `<button class="st-r" data-gd="${it.d}"><span class="code ${c.c}">${c.t}</span><span><b>${HR[dow(parse(it.d))]}, ${fmtDM(it.d)}</b><small>${esc(statusText(it.a, it.d))}${it.t ? " · lembur " + it.t : ""}</small></span><span class="hr">${it.a.st !== "O" && it.a.st !== "C" ? esc(hours(it.d, it.a, st.byU[it.u])) : ""}</span></button>`; };
+    const row = it => { const c = codeOf(it.a); return `<button class="st-r" data-gd="${it.d}"><span class="code ${c.c}">${c.t}</span><span><b>${HR[dow(parse(it.d))]}, ${fmtDM(it.d)}</b><small>${esc(statusText(it.a, it.d, st.byU[it.u]))}${it.t ? " · lembur " + it.t : ""}</small></span><span class="hr">${it.a.st !== "O" && it.a.st !== "C" ? esc(hours(it.d, it.a, st.byU[it.u])) : ""}</span></button>`; };
     let body;
     if (!items.length) body = `<div class="empty">Tidak ada tanggal pada periode ini.</div>`;
     else if (!scopeTeam) body = `<div class="st-list">${items.map(row).join("")}</div>`;
@@ -1008,7 +1025,7 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
     try { await loadRange(f, t); } catch (e) { toast(e.message); }
   }
   function legendHTML() {
-    return `<div class="legend"><span><i style="background:#fff"></i>Masuk</span><span><i style="background:var(--st-L)"></i>Long shift</span><span><i style="background:var(--st-O)"></i>Off</span><span><i style="background:var(--st-C)"></i>Cuti / ijin</span><span><i style="background:var(--st-S)"></i>Overtime Sabtu 8 jam</span><span><i style="background:var(--st-4)"></i>Shift 4 normal Sabtu (di kolom Shift 3)</span><span><b class="rqb">R</b>Permintaan member</span><span><b class="rqb p">R</b>Pengajuan menunggu</span><span><i style="box-shadow:0 0 0 2px var(--blue)"></i>Saya</span></div>`;
+    return `<div class="legend"><span><i style="background:#fff"></i>Masuk</span><span><i style="background:var(--st-L)"></i>Long shift / lembur s/d 17.30</span><span><b class="rqb sw">⇄</b>Libur pengganti Minggu</span><span><i style="background:var(--st-O)"></i>Off</span><span><i style="background:var(--st-C)"></i>Cuti / ijin</span><span><i style="background:var(--st-S)"></i>Overtime Sabtu 8 jam</span><span><i style="background:var(--st-4)"></i>Shift 4 normal Sabtu (di kolom Shift 3)</span><span><b class="rqb">R</b>Permintaan member</span><span><b class="rqb p">R</b>Pengajuan menunggu</span><span><i style="box-shadow:0 0 0 2px var(--blue)"></i>Saya</span></div>`;
   }
   function payLegendHTML() {
     const sw = (v, f) => `<span class="pc" style="${f ? `background:#${f}` : ""}">${v}</span>`;
@@ -1021,7 +1038,7 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
     const names = list.filter(m => { const a = A(ds, m.username); return a && Math.min(a.s, 3) === k; });
     names.sort((x, y) => { const a = A(ds, x.username), b = A(ds, y.username); return (a.st === "O" || a.st === "C") - (b.st === "O" || b.st === "C"); });
     return { out: !inRange, html: names.map(m => { const a = A(ds, m.username); const cls = [a.s === 4 && a.st !== "O" && a.st !== "C" ? "k4" : a.st === "N" ? "" : a.st, m.username === meU() ? "me" : ""].join(" ");
-      return `<button class="nm ${cls}" data-d="${ds}" data-u="${m.username}" title="${esc(m.surname)} · ${esc(statusText(a, ds))}">${rqMark(ds, m.username, a)}<span class="nmt">${esc(m.surname)}${a.s === 4 ? " · S4" : ""}</span><i>${esc(m.kode || "")}</i>${a.a ? `<b class="why" title="Alasan: ${esc(a.a)}">!</b>` : ""}</button>`; }).join("") };
+      return `<button class="nm ${cls}" data-d="${ds}" data-u="${m.username}" title="${esc(m.surname)} · ${esc(statusText(a, ds, m))}">${rqMark(ds, m.username, a)}<span class="nmt">${esc(m.surname)}${a.s === 4 ? " · S4" : ""}${a.st === "P" ? " ·17.30" : ""}</span>${a.st === "O" && dow(parse(ds)) < 5 && (() => { const sun = iso(wkStart(parse(ds))); return worked(A(sun, m.username)) && compOff(sun, m.username) === ds; })() ? `<b class="rqb sw" title="Libur pengganti masuk Minggu">⇄</b>` : ""}<i>${esc(m.kode || "")}</i>${a.a ? `<b class="why" title="Alasan: ${esc(a.a)}">!</b>` : ""}</button>`; }).join("") };
   }
   function boardHTML(days, forExport) {
     const td = TODAY(), isSun = d => parse(d).getDay() === 0;
@@ -1188,12 +1205,30 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
     return h + `</div><div class="legend"><span><span class="code k1">S1</span>Shift 1</span><span><span class="code k2">S2</span>Shift 2</span><span><span class="code k3">S3</span>Shift 3</span><span><span class="code L">1+LS</span>Long shift</span><span><span class="code S">OT1</span>Overtime Sabtu</span><span><span class="code k4">S4</span>Shift 4 normal</span><span><span class="code O">OFF</span>Off</span><span><span class="code C">CUTI</span>Cuti</span><span><b class="rqb">R</b>Permintaan</span></div>
       <div class="stats" style="margin-top:6px"><div class="stat"><b>${s.work}<small>hari</small></b><p>Hari kerja ${BULAN[mo]}</p></div><div class="stat"><b>${s.wd + s.sat + s.sun}<small>hari</small></b><p>Lembur (biasa ${s.wd} · Sabtu ${s.sat} · Minggu ${s.sun})</p></div></div>`;
   }
+  // ---- tukar libur Minggu: masuk Minggu ↔ libur pengganti Senin–Jumat berikutnya ----
+  function compOff(sun, u) { for (let i = 1; i <= 5; i++) { const ds = iso(addDays(parse(sun), i)), a = A(ds, u); if (a && a.st === "O") return ds; } return null; }
+  const worked = a => a && a.st !== "O" && a.st !== "C";
+  function swapInfo(ds, u) {
+    const d = parse(ds), a = A(ds, u), out = [], sun = iso(wkStart(d));
+    const lbl = x => `${HARI[dow(parse(x))]}, ${fmtDM(x)}`;
+    if (dow(d) === 6) {
+      if (worked(a)) { const c = compOff(ds, u); out.push(c ? `Masuk Minggu ini → <b>libur pengganti ${lbl(c)}</b>` : `Masuk Minggu ini tanpa libur pengganti Senin–Jumat berikutnya → <b>dihitung lembur Minggu</b>`); }
+      else if (a && a.st === "O") out.push(`Minggu ini libur${a.rq ? " (permintaan member)" : ""} — tidak ada libur pengganti`);
+    } else if (dow(d) < 5 && a && a.st === "O" && worked(A(sun, u)) && compOff(sun, u) === ds) out.push(`Libur pengganti karena <b>masuk ${lbl(sun)}</b>`);
+    // off lebih dari 1x dalam minggu ini (Minggu–Sabtu)
+    const offs = weekDays(sun).filter(x => { const b = A(x, u); return b && b.st === "O"; });
+    if (offs.length >= 2) out.push(`Off ${offs.length}x minggu ini: ` + offs.map(x => { const b = A(x, u), w = dow(parse(x));
+      const why = w === 6 ? "libur Minggu" : w < 5 && worked(A(sun, u)) && compOff(sun, u) === x ? `pengganti masuk Minggu ${fmtDM(sun)}` : b.rq ? "permintaan member" : "off";
+      return `<b>${lbl(x)}</b> (${why})`; }).join(" · "));
+    return out;
+  }
   // ---- detail / ubah satu sel ----
   function optionsFor(ds, m) {
     const sat = dow(parse(ds)) === 5, op = isOp(m);
     const sh = [["1", "Shift 1"], ["2", "Shift 2"], ["3", "Shift 3"]].concat(sat ? [["4", "Shift 4 normal", "22.30–03.30"]] : []);
-    const stt = sat ? (op ? [["S", "Overtime 8 jam"], ["N", "Normal 5 jam"], ["O", "Off"], ["C", "Cuti / ijin"]] : [["N", "Masuk (normal)"], ["O", "Off"], ["C", "Cuti / ijin"]])
-      : [["N", "Masuk"], ["L", "Long shift"], ["O", "Off"], ["C", "Cuti / ijin"]];
+    const stt = sat ? (op ? [["S", "Overtime 8 jam"], ["N", "Normal 5 jam"], ["O", "Off"], ["C", "Cuti / ijin"]]
+        : sat3(m) ? [["N", "Normal 5 jam"], ["S", "5 jam + lembur 3 jam"], ["O", "Off"], ["C", "Cuti / ijin"]] : [["N", "Masuk (normal)"], ["O", "Off"], ["C", "Cuti / ijin"]])
+      : [["N", "Masuk"], ["L", "Long shift"], ["P", "Lembur s/d 17.30", "Shift 1"], ["O", "Off"], ["C", "Cuti / ijin"]];
     return { sh, stt };
   }
   function cellSheet(ds, u) {
@@ -1203,9 +1238,9 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
     const draw = () => {
       const changed = !a || a.s !== cur.s || a.st !== cur.st, urgent = adm && changed && isUrgent(ds, a, cur, m);
       return `<h3>${esc(m.surname)} <span class="pill ${ROLE_CLS[m.otoritas] || "mb"}" style="vertical-align:middle">${esc(m.jabatan || m.otoritas)}</span></h3>
-      <p class="sub">${fmtLong(ds)}${fin ? " · <b>minggu final</b>" : ""}<br><b>${esc(statusText(a, ds))}</b>${a && a.st !== "O" && a.st !== "C" ? " · " + esc(hours(ds, a, m)) + " WIB" : ""}${a && a.n ? `<br>Catatan: ${esc(a.n)}` : ""}${a && a.a ? `<br><span class="why-t">Alasan perubahan: ${esc(a.a)}</span>` : ""}${p ? `<br><span class="pill wait">Pengajuan menunggu: ${esc(p.Jenis)}</span>` : a && a.rq ? `<br><span class="pill yes">Permintaan member</span>` : ""}</p>
+      <p class="sub">${fmtLong(ds)}${fin ? " · <b>minggu final</b>" : ""}<br><b>${esc(statusText(a, ds, m))}</b>${a && a.st !== "O" && a.st !== "C" ? " · " + esc(hours(ds, a, m)) + " WIB" : ""}${(() => { const sw = swapInfo(ds, u); return sw.length ? `<span class="swap-box">${ic("swap", 16)}<span>${sw.join("<br>")}</span></span>` : ""; })()}${a && a.n ? `<br>Catatan: ${esc(a.n)}` : ""}${a && a.a ? `<br><span class="why-t">Alasan perubahan: ${esc(a.a)}</span>` : ""}${p ? `<br><span class="pill wait">Pengajuan menunggu: ${esc(p.Jenis)}</span>` : a && a.rq ? `<br><span class="pill yes">Permintaan member</span>` : ""}</p>
       ${adm ? `<p class="lbl-s">Shift</p><div class="opt-grid" id="osh">${o.sh.map(([v, l, x]) => `<button data-s="${v}" class="${String(cur.s) === v ? "on" : ""}">${l}${x ? `<small>${x}</small>` : ""}</button>`).join("")}</div>
-        <p class="lbl-s">Status</p><div class="opt-grid" id="ost">${o.stt.map(([v, l]) => `<button data-st="${v}" class="${cur.st === v ? "on" : ""}">${l}</button>`).join("")}</div>
+        <p class="lbl-s">Status</p><div class="opt-grid" id="ost">${o.stt.map(([v, l, x]) => `<button data-st="${v}" class="${cur.st === v ? "on" : ""}" ${v === "P" && cur.s !== 1 ? "disabled" : ""}>${l}${x ? `<small>${x} saja</small>` : ""}</button>`).join("")}</div>
         <label class="chk"><input type="checkbox" id="crq" ${cur.rq ? "checked" : ""}> Tandai sebagai permintaan member</label>
         ${urgent ? `<div class="warn-box">${ic("warn", 18)}<span><b>Perubahan mendadak</b> — shift dimulai kurang dari 24 jam lagi (atau sudah lewat). Alasan wajib diisi dan member akan diberi notifikasi.</span></div>
           <label class="fld"><span>Alasan perubahan</span><textarea class="ctl" id="cwhy" maxlength="300" placeholder="Contoh: ganti orang sakit">${esc(cur.why || "")}</textarea></label>` : fin && changed ? `<div class="warn-box info">${ic("bell", 18)}<span>Minggu ini sudah final. ${esc(m.surname)} akan diberi notifikasi perubahan.</span></div>` : ""}
@@ -1216,7 +1251,7 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
     const s = sheet(draw());
     const redraw = () => { if ($("#cwhy", s)) cur.why = $("#cwhy", s).value; cur.rq = $("#crq", s) ? $("#crq", s).checked : cur.rq; s.innerHTML = `<div class="grab"></div>` + draw(); bind(); };
     const bind = () => {
-      s.querySelectorAll("[data-s]").forEach(b => b.onclick = () => { cur.s = Number(b.dataset.s); if (cur.s === 4 && cur.st === "S") cur.st = "N"; redraw(); });
+      s.querySelectorAll("[data-s]").forEach(b => b.onclick = () => { cur.s = Number(b.dataset.s); if (cur.s === 4 && cur.st === "S") cur.st = "N"; if (cur.s !== 1 && cur.st === "P") cur.st = "L"; redraw(); });
       s.querySelectorAll("[data-st]").forEach(b => b.onclick = () => { cur.st = b.dataset.st; if (cur.st === "S" && cur.s === 4) cur.s = 3; redraw(); });
       if ($("#csv", s)) $("#csv", s).onclick = async () => {
         const why = $("#cwhy", s) ? $("#cwhy", s).value.trim() : "", rq = $("#crq", s).checked;
@@ -1293,7 +1328,7 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
   }
   function shareWeek(ws, note) {
     const days = weekDays(ws), lines = [`*Jadwal Shift Maintenance & Tooling P3 — FINAL*`, `${fmtLong(ws)} s.d. ${fmtLong(days[6])}`, note ? `_${note}_` : "", ""];
-    days.forEach(d => { lines.push(`*${fmtShort(d)}*`); for (let k = 1; k <= 3; k++) { const l = st.members.filter(m => { const a = A(d, m.username); return a && a.st !== "O" && a.st !== "C" && Math.min(a.s, 3) === k; }).map(m => m.surname + (A(d, m.username).st === "L" ? "(LS)" : "")); lines.push(`S${k}: ${l.join(", ") || "-"}`); } });
+    days.forEach(d => { lines.push(`*${fmtShort(d)}*`); for (let k = 1; k <= 3; k++) { const l = st.members.filter(m => { const a = A(d, m.username); return a && a.st !== "O" && a.st !== "C" && Math.min(a.s, 3) === k; }).map(m => m.surname + (A(d, m.username).st === "L" ? "(LS)" : A(d, m.username).st === "P" ? "(s/d 17.30)" : "")); lines.push(`S${k}: ${l.join(", ") || "-"}`); } });
     lines.push("", "Cek detail di aplikasi Shift P3.");
     const url = "https://wa.me/?text=" + encodeURIComponent(lines.filter((x, i) => x !== "" || i > 2).join("\n"));
     window.open(url, "_blank", "noopener");
@@ -1320,7 +1355,7 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
     const a = A(r.Tanggal, r.Username);
     return `<div class="req ${r.Peringatan ? "warned" : ""}"><div class="top"><b>${esc(reqText(r))}</b>${stPill(r.Status)}</div>
       ${r.Peringatan ? `<div class="warn-box">${ic("warn", 18)}<span>${esc(r.Peringatan)}</span></div>` : ""}
-      <p>${fmtLong(r.Tanggal)} · jadwal saat ini: ${esc(statusText(a, r.Tanggal))}${r.Jenis === "Tukar" && st.byU[r.Partner] ? ` ↔ ${esc(st.byU[r.Partner].surname)}: ${esc(statusText(A(r.Tanggal, r.Partner), r.Tanggal))}` : ""}
+      <p>${fmtLong(r.Tanggal)} · jadwal saat ini: ${esc(statusText(a, r.Tanggal, st.byU[r.Username]))}${r.Jenis === "Tukar" && st.byU[r.Partner] ? ` ↔ ${esc(st.byU[r.Partner].surname)}: ${esc(statusText(A(r.Tanggal, r.Partner), r.Tanggal))}` : ""}
       ${r.Catatan ? `<br>“${esc(r.Catatan)}”` : ""}${r.Oleh ? `<br>${r.Status === "Disetujui" ? "Disetujui" : r.Status === "Ditolak" ? "Ditolak" : "Oleh"} ${esc(r.Oleh)} · ${esc(r.Diputuskan)}${r.CatatanAdmin ? ` — ${esc(r.CatatanAdmin)}` : ""}` : `<br><span style="color:var(--ink-3)">Diajukan ${esc(r.Dibuat)}</span>`}</p>
       ${acts || ""}</div>`;
   }
@@ -1335,7 +1370,7 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
       body = `<form class="form" id="rf2" novalidate>
         <div class="fld"><span>Jenis pengajuan</span><div class="kinds">${KINDS.map(([k, l, s]) => `<button type="button" data-k="${k}" class="${kind === k ? "on" : ""}">${l}<small>${s}</small></button>`).join("")}</div></div>
         <label class="fld"><span>Tanggal</span><input class="ctl" type="date" id="rd" value="${ds}"></label>
-        <p class="info-line" id="rinfo">Jadwal Anda: <b>${esc(statusText(a, ds))}</b>${a && a.st !== "O" && a.st !== "C" ? " · " + esc(hours(ds, a, st.byU[me])) : ""}</p>
+        <p class="info-line" id="rinfo">Jadwal Anda: <b>${esc(statusText(a, ds, st.byU[meU()]))}</b>${a && a.st !== "O" && a.st !== "C" ? " · " + esc(hours(ds, a, st.byU[me])) : ""}</p>
         ${w && w.off >= 2 ? `<div class="warn-box">${ic("warn", 18)}<span><b>Off ${w.off}x dalam seminggu</b> (${fmtDM(w.from)} – ${fmtDM(w.to)}: ${w.dates.map(fmtDM).join(", ")}). Hari kerja minggu ini menjadi <b>${w.work} hari</b> (sebelumnya ${w.before}) dan perlu dihitung ulang. Pengajuan ini harus dikonfirmasi admin.</span></div>
           <label class="chk"><input type="checkbox" id="ack2"> Saya mengerti, off 2x minggu ini dan hari kerja akan dihitung ulang</label>` : ""}
         ${urgent ? `<div class="warn-box">${ic("clock", 18)}<span><b>Pengajuan mendadak</b> — kurang dari 24 jam sebelum shift. Alasan wajib diisi.</span></div>` : ""}
@@ -1549,7 +1584,8 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
     sheet(`<h3>Panduan aplikasi Shift P3</h3><p class="sub">Versi ${APP_VERSION}. Panduan lengkap (PDF) bisa diminta ke Super Admin.</p>
       ${sec("1. Masuk & ganti password", `<ol class="steps"><li>Username = nama panggilan (contoh <b>katoni</b>).</li><li>Password awal diberikan Super Admin. Saat login pertama wajib membuat password baru (min. 6 karakter).</li><li>Lupa password: minta Super Admin menekan <b>Reset password</b>.</li><li>Belum punya akun: <b>Masuk sebagai tamu</b> › <b>Minta akun</b>.</li></ol>`, true)}
       ${sec("Dashboard (v0.4)", `<ol class="steps"><li>Kartu biru: ketuk <b>Shift 1/2/3</b> untuk melihat semua orang di shift itu, lengkap dengan jabatan, tim, dan jam. Ketuk <b>Off · Cuti</b> untuk daftar yang libur.</li><li><b>Geser kartu ke kiri/kanan</b> (atau tombol ‹ ›, atau ketuk tanggal di "7 hari ke depan") untuk melihat siapa yang masuk besok sampai 6 hari ke depan.</li><li>Tombol <b>Semua / P3A / P3B</b> memisahkan area. Titik kuning = P3A, oranye = P3B, biru = leader.</li><li>Kotak ringkasan periode (hari kerja, lembur hari biasa, overtime Sabtu, lembur Minggu, shift malam, off, cuti) bisa diketuk untuk melihat tanggal-tanggalnya; ketuk tanggal untuk membuka jadwal hari itu.</li></ol>`)}
-      ${sec("Baru di v0.5", `<ol class="steps"><li><b>Bulanan › Mingguan</b>: jadwal sebulan ditampilkan dengan template mingguan (Shift 1/2/3 per tim), minggu demi minggu. Tombol <b>Payroll</b> kembali ke format payroll.</li><li><b>Admin</b>: tekan-tahan nama di papan mingguan/harian (di komputer: klik lalu seret), lalu geser ke kolom Shift lain di <b>hari yang sama</b>. Perubahan &lt; 24 jam sebelum shift tetap wajib diberi alasan.</li><li><b>Sabtu leader</b> (menu Member atau Jadwal › Bulanan, Admin/Super Admin): shift leader &amp; Ast. Manager diatur <b>Normal</b> (Sabtu 5 jam, bisa lembur) atau <b>Grup A–D</b> (Sabtu 07.00–15.00 hanya saat giliran: A 21 Nov, B 28 Nov, C 5 Des, D 12 Des, lalu berulang). Setelah disimpan, giliran bisa langsung diterapkan ke jadwal.</li></ol>`, true)}
+      ${sec("Baru di v0.6", `<ol class="steps"><li>Senin–Jumat Shift 1 ada status <b>Lembur s/d 17.30</b> (2 jam) selain long shift s/d 19.30. Di payroll sama seperti long shift (angka 1, biru); dihitung lembur hari biasa.</li><li>Sabtu jam normal untuk shift leader (mode Normal), Anita, dan Fahtur: <b>5 jam + lembur 3 jam</b> sesuai shift (S1 s/d 15.30, S2 s/d 20.30, S3 s/d 01.30). AM, Adit, dan leader mode Grup tidak termasuk.</li><li>Ketuk nama untuk melihat <b>tukar libur Minggu</b>: masuk Minggu → tanggal libur penggantinya, dan sebaliknya. Bila off lebih dari 1x dalam seminggu, semua tanggal off dan alasannya ditampilkan. Tanda <b>⇄</b> di papan = libur pengganti Minggu.</li></ol>`, true)}
+      ${sec("Baru di v0.5", `<ol class="steps"><li><b>Bulanan › Mingguan</b>: jadwal sebulan ditampilkan dengan template mingguan (Shift 1/2/3 per tim), minggu demi minggu. Tombol <b>Payroll</b> kembali ke format payroll.</li><li><b>Admin</b>: tekan-tahan nama di papan mingguan/harian (di komputer: klik lalu seret), lalu geser ke kolom Shift lain di <b>hari yang sama</b>. Perubahan &lt; 24 jam sebelum shift tetap wajib diberi alasan.</li><li><b>Sabtu leader</b> (menu Member atau Jadwal › Bulanan, Admin/Super Admin): shift leader &amp; Ast. Manager diatur <b>Normal</b> (Sabtu 5 jam, bisa lembur) atau <b>Grup A–D</b> (Sabtu 07.00–15.00 hanya saat giliran: A 21 Nov, B 28 Nov, C 5 Des, D 12 Des, lalu berulang). Setelah disimpan, giliran bisa langsung diterapkan ke jadwal.</li></ol>`)}
       ${sec("2. Melihat jadwal", `<ol class="steps"><li><b>Bulanan</b> = format payroll (angka shift per tanggal). <b>Mingguan</b>/<b>Harian</b> = format draft (Shift 1/2/3 per tim), urutan Minggu → Sabtu. <b>Saya</b> = kalender pribadi.</li><li>Warna: hijau muda = long shift, oranye muda = off, oranye = cuti, hijau terang = overtime Sabtu, ungu = Shift 4 normal.</li><li>Tanda <b class="rqb">R</b> = jadwal dari permintaan member; <b class="rqb p">R</b> = pengajuan masih menunggu; <b class="why">!</b> = perubahan mendadak (ketuk nama untuk melihat alasannya).</li><li>Ketuk nama untuk melihat jam kerja. Tombol <b>Ekspor</b> = Excel / JPG / PDF.</li></ol>`)}
       ${sec("3. Mengajukan off / cuti / tukar / minta shift", `<ol class="steps"><li>Menu <b>Request</b> › pilih jenis › tanggal › catatan › <b>Kirim</b>.</li><li>Off 2x dalam seminggu (Minggu–Sabtu) akan muncul peringatan; wajib dicentang dan dikonfirmasi admin karena hari kerja dihitung ulang.</li><li>Pengajuan kurang dari 24 jam sebelum shift wajib diisi alasannya.</li><li>Status bisa dilihat di <b>Riwayat saya</b>; hasilnya juga masuk notifikasi (ikon lonceng).</li></ol>`)}
       ${sec("4. Notifikasi & update", `<ol class="steps"><li>Ikon lonceng: jadwal minggu sudah final, jadwal Anda diubah, keputusan pengajuan.</li><li>Bila muncul <b>Versi baru aplikasi tersedia</b>, ketuk <b>Perbarui</b>.</li></ol>`)}
@@ -1647,7 +1683,7 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
       Object.values(d.weeks).forEach(w => Object.entries(w.days || {}).forEach(([ds, day]) => Object.entries(day).forEach(([name, a]) => {
         let u = name.toLowerCase().replace(/\s+/g, ""); u = ALIAS[u] || u;
         if (!st.byU[u]) { unknown.add(name); return; }
-        cells.push({ d: ds, u, s: Number(a[0]) || 1, st: ["N", "L", "O", "C", "S"].includes(a[1]) ? a[1] : "N" });
+        cells.push({ d: ds, u, s: Number(a[0]) || 1, st: ["N", "L", "P", "O", "C", "S"].includes(a[1]) ? a[1] : "N" });
       })));
       await importCells(cells, `File <b>${esc(f.name)}</b> (Papan Shift)`, [...unknown], "Papan Shift " + f.name);
     } catch (e) { setSync("ok"); toast(e.message); }
@@ -1763,7 +1799,7 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
     ws.pageSetup.printArea = `A1:${ws.getColumn(last).letter}${r}`;
   }
   // format draft jadwal (Template_Shift_Maintenance): blok minggu, tiap hari 3 kolom shift, urutan Minggu → Sabtu
-  const ST_XL = { L: "C6E0B4", O: "F8CBAD", S: "00F66F", C: "FFC000" };
+  const ST_XL = { L: "C6E0B4", P: "C6E0B4", O: "F8CBAD", S: "00F66F", C: "FFC000" };
   function buildDraft(wb, days) {
     const ws = wb.addWorksheet(days.length > 1 ? `Minggu ${fmtDM(days[0])}`.slice(0, 31) : fmtDM(days[0]), { pageSetup: { orientation: "landscape", paperSize: 9, fitToPage: true, fitToWidth: 1, fitToHeight: 0 }, views: [{ state: "frozen", xSplit: 1, ySplit: 8 }] });
     const nc = 1 + days.length * 3; ws.getColumn(1).width = 7; for (let c = 2; c <= nc; c++) ws.getColumn(c).width = 15;
@@ -1781,7 +1817,7 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
     const names = (d, list, k) => list.filter(m => { const a = A(d, m.username); return a && Math.min(a.s, 3) === k; })
       .sort((x, y2) => { const a = A(d, x.username), b = A(d, y2.username); return (a.st === "O" || a.st === "C") - (b.st === "O" || b.st === "C"); });
     const put = (row, col, d, m) => { const a = A(d, m.username), x = ws.getCell(row, col);
-      x.value = `${m.surname} (${m.kode || ""})${a.s === 4 ? " S4" : ""}${a.rq ? " (R)" : ""}`; const f = a.s === 4 && a.st !== "O" && a.st !== "C" ? "B4A7D6" : ST_XL[a.st]; if (f) x.fill = fillX(f); };
+      x.value = `${m.surname} (${m.kode || ""})${a.s === 4 ? " S4" : ""}${a.st === "P" ? " s/d 17.30" : ""}${a.rq ? " (R)" : ""}`; const f = a.s === 4 && a.st !== "O" && a.st !== "C" ? "B4A7D6" : ST_XL[a.st]; if (f) x.fill = fillX(f); };
     const titleRow = (row, d, i, text, hex, ink) => { ws.mergeCells(row, C0(i), row, C0(i) + 2); const x = ws.getCell(row, C0(i)); x.value = text; x.alignment = { horizontal: "center" }; x.font = { bold: true, size: 9, color: { argb: "FF" + (ink || "000000") } }; if (hex) x.fill = fillX(hex); };
     const groupStart = {};
     teams.forEach(t => {
@@ -1801,7 +1837,7 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
     for (let rr = top; rr < r; rr++) { const x = ws.getCell(rr, 1); x.font = { bold: true, size: 9, color: { argb: "FF595959" } }; x.alignment = { horizontal: "center", vertical: "middle" }; }
     r++;
     ws.getCell(r, 2).value = "Keterangan :"; ws.getCell(r, 2).font = { bold: true }; r++;
-    [["Masuk", null], ["Long shift / lembur", ST_XL.L], ["Off", ST_XL.O], ["Overtime Sabtu 8 jam", ST_XL.S], ["Shift 4 normal Sabtu 22.30 – 03.30 (di kolom Shift 3)", "B4A7D6"], ["Cuti / ijin", ST_XL.C], ["(R) = permintaan member", null]].forEach(([l, f]) => { const x = ws.getCell(r, 2); x.border = BORDER; if (f) x.fill = fillX(f); ws.getCell(r, 3).value = l; r++; });
+    [["Masuk", null], ["Long shift / lembur (teks \"s/d 17.30\" = lembur 2 jam Shift 1)", ST_XL.L], ["Off", ST_XL.O], ["Overtime Sabtu 8 jam", ST_XL.S], ["Shift 4 normal Sabtu 22.30 – 03.30 (di kolom Shift 3)", "B4A7D6"], ["Cuti / ijin", ST_XL.C], ["(R) = permintaan member", null]].forEach(([l, f]) => { const x = ws.getCell(r, 2); x.border = BORDER; if (f) x.fill = fillX(f); ws.getCell(r, 3).value = l; r++; });
   }
   function buildMine(wb, y, mo) {
     const me = meU(), m = st.byU[me], ws = wb.addWorksheet(`${m.surname} ${BULAN[mo]}`.slice(0, 31));
@@ -1868,7 +1904,7 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
           if (f.theme === 5 || fh === "F8CBAD") v = { s: k, st: "O" };
           else if (fh === "FFC000") v = { s: k, st: "C" };
           else if (fh === "B4A7D6" || /S4/.test(extra)) v = { s: 4, st: "N" };
-          else if (f.theme === 9 || fh === "C6E0B4" || fh === "00B0F0") v = { s: k, st: "L" };
+          else if (f.theme === 9 || fh === "C6E0B4" || fh === "00B0F0") v = { s: k, st: /17[.:]30/.test(extra) && k === 1 ? "P" : "L" };
           else if (fh === "00F66F") v = { s: k, st: "S" };
           else v = { s: k, st: "N" };
           v.rq = /\(R\)/.test(extra);
