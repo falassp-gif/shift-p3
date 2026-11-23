@@ -350,6 +350,82 @@ details.gd>div{padding:0 0 12px}
 .upd-bar.in{transform:translate(-50%,0)}
 .upd-bar span{flex:1} .upd-bar b{display:block;font-size:14px} .upd-bar small{color:rgba(255,255,255,.75);font-size:12px}
 .upd-bar button{border:0;border-radius:12px;background:var(--accent);color:#fff;font-weight:800;padding:10px 14px;min-height:40px}
+/* ---- v0.4 dashboard ---- */
+.ic.red{background:#fde6e3;color:#c8331f} .ic.navy{background:#e4e8f5;color:#1d327e}
+#todayP{touch-action:pan-y}
+#todayP.sl-l{animation:slL .32s var(--ease-out)} #todayP.sl-r{animation:slR .32s var(--ease-out)}
+@keyframes slL{from{opacity:.2;transform:translateX(36px)}to{opacity:1;transform:none}}
+@keyframes slR{from{opacity:.2;transform:translateX(-36px)}to{opacity:1;transform:none}}
+.today-h{align-items:center}
+.today-h .dl{flex:1;text-align:center;line-height:1.25}
+.today-h .dl b{display:block;color:#fff;font-size:15px;text-transform:none}
+.today-h .dl small{font-size:12px;color:rgba(255,255,255,.75)}
+.dnav{flex:none;width:34px;height:34px;border-radius:11px;border:0;background:rgba(255,255,255,.14);color:#fff;display:grid;place-items:center}
+.dnav:disabled{opacity:.3}
+.grp-seg{display:flex;gap:6px;margin-top:12px}
+.grp-seg button{flex:1;border:0;border-radius:11px;padding:7px 4px;background:rgba(255,255,255,.1);color:rgba(255,255,255,.85);font-weight:700;font-size:12.5px;display:flex;align-items:center;justify-content:center;gap:6px}
+.grp-seg button.on{background:#fff;color:var(--navy-900)}
+i.g-P3A,i.g-P3B,i.g-LDR,.nm-l i{display:inline-block;width:9px;height:9px;border-radius:50%;flex:none}
+.g-P3A i,i.g-P3A{background:#ffe14d} .g-P3B i,i.g-P3B{background:#ff9f1a} .g-LDR i,i.g-LDR{background:#5fd0ff}
+.today-cols .tc{display:flex;flex-direction:column;align-items:stretch;text-align:left;border:0;color:#fff;font:inherit;background:rgba(255,255,255,.1);border-radius:14px;padding:9px 9px 8px;min-height:96px;font-size:12.5px;line-height:1.5;cursor:pointer;transition:background .15s}
+.today-cols .tc:active{background:rgba(255,255,255,.2)}
+.today-cols .tc b{display:flex;justify-content:space-between;align-items:center;font-size:14px;margin-bottom:3px}
+.today-cols .tc b em{font-style:normal;font-size:11.5px;background:rgba(255,255,255,.2);border-radius:8px;padding:0 7px}
+.nm-l{display:flex;align-items:center;gap:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nm-l.me{color:#ffd29a;font-weight:700}
+.tc .more{opacity:.75} .tc .det{margin-top:auto;padding-top:4px;font-size:11.5px;opacity:.7}
+.today-f{display:flex;align-items:center;justify-content:space-between;margin-top:10px;gap:8px}
+.offln{border:0;background:none;color:rgba(255,255,255,.85);font-size:12.5px;font-weight:600;padding:4px 0}
+.dots{display:flex;gap:5px} .dots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.3);transition:all .2s} .dots i.on{width:16px;border-radius:4px;background:#fff}
+.lg{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:8px;font-size:11.5px;color:rgba(255,255,255,.7)}
+.lg span{display:flex;align-items:center;gap:5px} .lg .sw{margin-left:auto}
+.week-strip .wd{border:0;font:inherit;color:inherit;cursor:pointer}
+.wd.sel{background:var(--navy-900);color:#fff} .wd.sel small{color:rgba(255,255,255,.7)}
+button.stat{position:relative;border:0;text-align:left;font:inherit;color:inherit;cursor:pointer;transition:transform .15s}
+button.stat:active{transform:scale(.97)}
+.stat .go{position:absolute;top:16px;right:14px;color:var(--ink-3)}
+.sh-g{margin-bottom:14px}
+.sh-g h4{display:flex;align-items:center;gap:8px;margin:4px 0 8px;font-size:14px}
+.sh-g h4 small{color:var(--ink-3);font-weight:600}
+.sh-r,.st-r{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:14px;background:#f5f6fa;margin-bottom:6px;width:100%;border:0;text-align:left;font:inherit;color:inherit}
+.sh-r.me{outline:2px solid var(--blue);outline-offset:-2px}
+.sh-r>span:nth-child(2),.st-r>span:nth-child(2){flex:1;min-width:0}
+.sh-r b,.st-r b{display:block;font-size:14px} .sh-r small,.st-r small{display:block;color:var(--ink-2);font-size:12px}
+.sh-r .hr,.st-r .hr{font-size:12px;color:var(--ink-2);text-align:right;max-width:42%}
+.sh-r .code,.st-r .code{min-width:46px;text-align:center}
+.st-r{cursor:pointer}
+.st-m{border-radius:14px;background:#f5f6fa;margin-bottom:8px;padding:0 12px}
+.st-m summary{display:flex;align-items:center;gap:8px;padding:12px 0;cursor:pointer;list-style:none}
+.st-m summary::-webkit-details-marker{display:none}
+.st-m summary .n{margin-left:auto;font-weight:700;color:var(--blue)}
+.st-m .st-r{background:#fff}
+#shSeg button{font-size:12px;padding:9px 2px}
+@media (prefers-reduced-motion:reduce){#todayP.sl-l,#todayP.sl-r{animation:none}}
+.tc .gc{display:flex;gap:8px;font-size:11.5px;opacity:.9;margin:-1px 0 4px} .tc .gc span{display:flex;align-items:center;gap:4px}
+.tc .gc i{width:7px!important;height:7px!important}
+/* ---- v0.5 ---- */
+.mini-seg{display:inline-flex;background:#e3e7f2;border-radius:12px;padding:3px;gap:2px}
+.mini-seg button{border:0;background:none;border-radius:9px;padding:7px 12px;font-weight:700;font-size:13px;color:var(--ink-2)}
+.mini-seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 4px rgba(16,30,84,.12)}
+.mwk{margin-bottom:18px}
+.mwk-h{display:flex;align-items:center;gap:10px;margin:4px 2px 8px}
+.mwk-h b{font-size:15px} .mwk-h .pill.ok{background:var(--ok-bg);color:var(--ok)}
+.lnk{margin-left:auto;border:0;background:none;color:var(--blue);font-weight:700;font-size:13px}
+.gturn{font-weight:700;opacity:.8;font-size:.92em}
+.nm.dnd{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;cursor:grab}
+.nm.dnd-src{opacity:.35}
+.dnd-ghost{position:fixed;left:0;top:0;z-index:999;pointer-events:none;box-shadow:0 10px 24px rgba(16,30,84,.3);transform-origin:center;opacity:.95;scale:1.06;margin:0}
+body.dnd-on,body.dnd-on *{cursor:grabbing!important;user-select:none}
+td.c.dz{background:rgba(43,78,167,.06);box-shadow:inset 0 0 0 2px rgba(43,78,167,.25)}
+td.c.dz-on{background:rgba(43,78,167,.18);box-shadow:inset 0 0 0 2px var(--blue)}
+.sm-r{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;background:#f5f6fa;border-radius:16px;margin-bottom:8px}
+.sm-r .ava{width:38px;height:38px;border-radius:12px;background:var(--blue-soft);color:var(--blue);display:grid;place-items:center;font-weight:800}
+.sm-r .tx{flex:1;min-width:90px} .sm-r .tx b{display:block} .sm-r .tx small{color:var(--ink-2);font-size:12px}
+.gpick{display:flex;gap:6px;width:100%;padding-left:48px}
+.gpick button{flex:1;border:1.5px solid var(--line);background:#fff;border-radius:11px;padding:8px 0;font-weight:800;color:var(--ink-2)}
+.gpick button.on{background:var(--navy-900);border-color:var(--navy-900);color:#fff}
+.gt-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.gt-grid div{background:#f5f6fa;border-radius:12px;padding:8px;text-align:center} .gt-grid small{display:block;color:var(--ink-3);font-size:11.5px} .gt-grid b{font-size:13.5px}
 
 </style>
 </head>
@@ -410,6 +486,7 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
     file: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/>',
     bell: '<path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/>',
     send: '<path d="M21 3L10 14"/><path d="M21 3l-7 18-4-7-7-4z"/>', history: '<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/>',
+    moon: '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',
     warn: '<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/>', share: '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/>'
   };
   const ic = (n, s = 22) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[n]}</svg>`;
@@ -432,9 +509,15 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
   // warna payroll (template "Shift Payroll")
   const PAY = { sat: "FFFF00", ot: "00F66F", ls: "00B0F0", req: "47D45A", cuti: "FFC000", s4: "B4A7D6", head: "D9D9D9" };
   const isOp = m => m && ["BD", "T3A", "PRV", "P3B", "T3B"].includes(m.tim) && ["M", "E", "T"].includes(m.kode);
+  // Sabtu shift leader / AM: mode Normal (5 jam, bisa lembur) atau Grup A–D (07.00–15.00, giliran 4 minggu mulai Grup A = 21 Nov 2026)
+  const GRUP = ["A", "B", "C", "D"], SAT_BASE = "2026-11-21";
+  const isLeader = m => !!m && ["SL", "AM"].includes(m.tim);
+  const isGrup = m => isLeader(m) && m.modeSabtu === "Grup" && GRUP.includes(m.grupSabtu);
+  const satTurn = ds => GRUP[(((Math.round((parse(ds) - parse(SAT_BASE)) / 6048e5)) % 4) + 4) % 4];
   function hours(ds, a, m) {
     if (!a) return "";
     const sat = dow(parse(ds)) === 5;
+    if (sat && isGrup(m) && a.st !== "O" && a.st !== "C") return "07.00–15.00";
     if (a.s === 4) return HSAT[3];
     if (sat && !(a.st === "S" || (isOp(m) && a.st === "L"))) return HSAT[a.s - 1];
     return H8[a.s - 1] + (a.st === "L" && !sat ? (a.s === 1 ? " + LS 15.30–19.30" : a.s === 3 ? " + LS 19.30–23.30" : " + LS") : "");
@@ -454,7 +537,7 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
     if (a.st === "O") return { v: "●", f: a.rq ? PAY.req : null };
     if (a.st === "C") return { v: "C", f: PAY.cuti };
     if (a.s === 4) return { v: 4, f: PAY.s4 };
-    if (w === 5) return (a.st === "S" || (isOp(m) && a.st === "L")) ? { v: a.s, f: PAY.ot } : { v: a.s, f: PAY.sat };
+    if (w === 5) return ((a.st === "S" && !isGrup(m)) || (isOp(m) && a.st === "L")) ? { v: a.s, f: PAY.ot } : { v: a.s, f: PAY.sat };
     if (a.st === "L") return { v: a.s === 1 ? 1 : 2, f: PAY.ls };
     return { v: a.s, f: null };
   }
@@ -463,7 +546,7 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
   function startAt(ds, a, m) {
     if (!a || a.st === "O" || a.st === "C") return null;
     const sat = dow(parse(ds)) === 5; let hm;
-    if (a.s === 4) hm = [22, 30]; else if (sat && !(a.st === "S" || (isOp(m) && a.st === "L"))) hm = [[7, 30], [12, 30], [17, 30]][a.s - 1]; else hm = [[7, 30], [15, 30], [23, 30]][a.s - 1];
+    if (sat && isGrup(m)) hm = [7, 0]; else if (a.s === 4) hm = [22, 30]; else if (sat && !(a.st === "S" || (isOp(m) && a.st === "L"))) hm = [[7, 30], [12, 30], [17, 30]][a.s - 1]; else hm = [[7, 30], [15, 30], [23, 30]][a.s - 1];
     if (!hm) return null; const d = parse(ds); d.setHours(hm[0], hm[1]); return d;
   }
   function isUrgent(ds, oldA, newA, m) {
@@ -483,7 +566,7 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
   window.addEventListener("appinstalled", () => { installEvt = null; toast("Aplikasi Shift P3 terpasang di HP."); });
   const isStandalone = () => window.matchMedia && window.matchMedia("(display-mode: standalone)").matches || navigator.standalone;
   async function doInstall() { if (!installEvt) return installHelp(); installEvt.prompt(); try { await installEvt.userChoice; } catch (e) { } installEvt = null; }
-  const APP_VERSION = "0.3";
+  const APP_VERSION = "0.5";
   // versi baru (aplikasi terinstal): tampilkan ajakan memperbarui
   function showUpdateBar(apply) {
     if (document.getElementById("updBar")) return;
@@ -522,7 +605,7 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
   // ---------- state ----------
   const st = {
     token: LS.get("ms3.token"), user: null, members: [], byU: {}, sched: {}, weeks: {}, range: null, reqs: [], notifs: [], unread: 0, tab: "dash", sync: "ok",
-    jmode: LS.get("ms3.jmode2") || "week", jmonth: null, jweek: null, jday: TODAY(), dashScope: "me", period: null,
+    jmode: LS.get("ms3.jmode2") || "week", mview: LS.get("ms3.mview") || "pay", jmonth: null, jweek: null, jday: TODAY(), dashScope: "me", period: null,
     mfilter: "Semua", q: "", rtab: "new", rkind: "Off", rdate: null
   };
   const lvl = () => st.guest ? 0 : ({ "Super Admin": 3, "Admin": 2 }[st.user && st.user.otoritas] || 1);
@@ -666,7 +749,7 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
     };
   }
   function logout(expired) {
-    st.token = null; st.user = null; st.range = null; st.sched = {}; st.notifs = []; st.unread = 0; st._notifInit = false; st.tab = "dash"; st.rtab = "new"; st.period = null; st.guest = false; LS.set("ms3.token", null); closeSheet();
+    st.token = null; st.user = null; st.range = null; st.sched = {}; st.notifs = []; st.unread = 0; st._notifInit = false; st.tab = "dash"; st.rtab = "new"; st.period = null; st.dashDay = 0; st.dashScope = null; st.guest = false; LS.set("ms3.token", null); closeSheet();
     showLogin(expired ? "Sesi berakhir, silakan masuk lagi." : "");
   }
 
@@ -722,56 +805,143 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
   const periodLabel = k => `${fmtDM(k)} – ${fmtDM(periodEnd(k))}`;
   function sundayComp(ds, u) { let seen = 0; for (let i = 1; i <= 5; i++) { const a = A(iso(addDays(parse(ds), i)), u); if (!a) continue; seen++; if (a.st === "O") return true; } return !seen; }
   function stats(u, from, to) {
-    const o = { work: 0, wd: 0, sat: 0, sun: 0, off: 0, cuti: 0, s3: 0 }, m = st.byU[u];
+    const o = { work: 0, wd: 0, sat: 0, sun: 0, ot: 0, off: 0, cuti: 0, s3: 0 }, L = {}, m = st.byU[u];
+    Object.keys(o).forEach(k => L[k] = []); o.L = L;
+    const add = (k, it) => { o[k]++; L[k].push(it); };
     for (let d = parse(from); iso(d) <= to; d = addDays(d, 1)) {
       const ds = iso(d), a = A(ds, u), w = dow(d); if (!a) continue;
-      if (a.st === "O") { o.off++; continue; } if (a.st === "C") { o.cuti++; continue; }
-      o.work++; if (a.s === 3) o.s3++;
-      if (w < 5) { if (a.st === "L") o.wd++; }
-      else if (w === 5) { if (isOp(m) && (a.st === "S" || a.st === "L")) o.sat++; }
-      else if (!sundayComp(ds, u)) o.sun++; else if (a.st === "L") o.wd++;
+      const it = { d: ds, u, a };
+      if (a.st === "O") { add("off", it); continue; } if (a.st === "C") { add("cuti", it); continue; }
+      add("work", it); if (a.s === 3) add("s3", it);
+      if (w < 5) { if (a.st === "L") { add("wd", it); add("ot", { ...it, t: "Hari biasa" }); } }
+      else if (w === 5) { if ((isOp(m) && (a.st === "S" || a.st === "L")) || (a.st === "S" && !isGrup(m) && !isOp(m))) { add("sat", it); add("ot", { ...it, t: "Sabtu" }); } }
+      else if (!sundayComp(ds, u)) { add("sun", it); add("ot", { ...it, t: "Minggu" }); }
+      else if (a.st === "L") { add("wd", it); add("ot", { ...it, t: "Hari biasa" }); }
     }
     return o;
   }
+  const STAT_DEF = [
+    ["work", "blue", "briefcase", "Hari kerja", "Semua hari masuk kerja (selain off dan cuti)."],
+    ["ot", "red", "bolt", "Total lembur", "Gabungan lembur hari biasa, overtime Sabtu, dan lembur Minggu."],
+    ["wd", "green", "clock", "Lembur hari biasa", "Long shift Senin–Jumat (+4 jam)."],
+    ["sat", "orange", "bolt", "Overtime Sabtu", "Sabtu 8 jam: operator, atau leader mode Normal yang lembur."],
+    ["sun", "pink", "sun", "Lembur Minggu", "Masuk Minggu tanpa libur pengganti Senin–Jumat berikutnya."],
+    ["s3", "navy", "moon", "Shift malam", "Hari masuk di shift 3."],
+    ["off", "violet", "off", "Off", "Hari libur, termasuk off permintaan member."],
+    ["cuti", "teal", "cal", "Cuti / ijin", "Hari cuti atau ijin."]
+  ];
+  // ---- grup area: P3A / P3B / Leader ----
+  const grpOf = m => !m ? "P3A" : (["P3B", "T3B"].includes(m.tim) || /3B/i.test(m.payroll || "") || /3B/i.test(m.area || "")) ? "P3B" : ["SL", "AM"].includes(m.tim) ? "LDR" : "P3A";
+  const GRP_NM = { P3A: "P3A", P3B: "P3B", LDR: "Leader" };
+  const dayName = (ds, off) => off === 0 ? "hari ini" : off === 1 ? "besok" : off === 2 ? "lusa" : HARI[dow(parse(ds))];
+  // panel shift harian (dipakai dashboard member & tamu)
+  function shiftData(ds) {
+    const f = st.dashGrp || "all", me = st.guest ? "" : meU();
+    const list = st.members.filter(x => f === "all" || grpOf(x) === f);
+    const by = { 1: [], 2: [], 3: [], off: [], cuti: [], none: [] };
+    list.forEach(x => { const b = A(ds, x.username); if (!b) by.none.push(x); else if (b.st === "O") by.off.push(x); else if (b.st === "C") by.cuti.push(x); else by[Math.min(b.s, 3)].push(x); });
+    const grpOrder = x => ({ P3A: 0, P3B: 1, LDR: 2 })[grpOf(x)];
+    [1, 2, 3].forEach(k => by[k].sort((a, b) => (b.username === me) - (a.username === me) || grpOrder(a) - grpOrder(b)));
+    return by;
+  }
+  function shiftPanel(off, withMe) {
+    const ds = iso(addDays(parse(TODAY()), off)), me = st.guest ? "" : meU(), a = withMe ? A(ds, me) : null, by = shiftData(ds), f = st.dashGrp || "all";
+    const cnt = g => st.members.filter(x => grpOf(x) === g).filter(x => { const b = A(ds, x.username); return b && b.st !== "O" && b.st !== "C"; }).length;
+    const nm = x => `<span class="nm-l g-${grpOf(x)} ${x.username === me ? "me" : ""}"><i></i>${esc(x.surname)}${x.username === me ? " (saya)" : ""}</span>`;
+    const col = k => { const l = by[k], show = l.slice(0, 4);
+      const gc = ["P3A", "P3B", "LDR"].map(g => [g, l.filter(x => grpOf(x) === g).length]).filter(([, n]) => n);
+      return `<button class="tc" data-sh="${k}" aria-label="Detail shift ${k}, ${l.length} orang"><b>Shift ${k}<em>${l.length}</em></b>${f === "all" && gc.length ? `<span class="gc">${gc.map(([g, n]) => `<span><i class="g-${g}"></i>${n}</span>`).join("")}</span>` : ""}${show.map(nm).join("") || "<span class='nm-l' style='opacity:.6'>—</span>"}${l.length > 4 ? `<span class="more">+${l.length - 4} lainnya</span>` : ""}<span class="det">Detail ›</span></button>`; };
+    const dots = Array.from({ length: 7 }, (_, i) => `<i class="${i === off ? "on" : ""}"></i>`).join("");
+    return `<div class="today-h"><button class="dnav" data-hd="-1" ${off <= 0 ? "disabled" : ""} aria-label="Hari sebelumnya">${ic("left", 18)}</button>
+        <span class="dl"><b>Shift ${dayName(ds, off)}</b><small>${fmtShort(ds)}${dow(parse(ds)) === 6 ? " · Minggu digabung per area" : ""}</small></span>
+        <button class="dnav" data-hd="1" ${off >= 6 ? "disabled" : ""} aria-label="Hari berikutnya">${ic("right", 18)}</button></div>
+      ${withMe ? `<div class="mine">Saya: ${esc(statusText(a, ds))}</div><div class="hrs">${a && a.st !== "O" && a.st !== "C" ? esc(hours(ds, a, st.byU[me])) + " WIB" : a ? "Selamat beristirahat" : "Jadwal belum diisi"}</div>` : ""}
+      <div class="grp-seg" role="tablist"><button data-gf="all" class="${f === "all" ? "on" : ""}">Semua</button><button data-gf="P3A" class="${f === "P3A" ? "on" : ""}"><i class="g-P3A"></i>P3A · ${cnt("P3A")}</button><button data-gf="P3B" class="${f === "P3B" ? "on" : ""}"><i class="g-P3B"></i>P3B · ${cnt("P3B")}</button></div>
+      <div class="today-cols">${col(1)}${col(2)}${col(3)}</div>
+      <div class="today-f"><button class="offln" data-sh="off">Off ${by.off.length} · Cuti ${by.cuti.length}${by.none.length ? ` · Belum diisi ${by.none.length}` : ""} ›</button><span class="dots" aria-hidden="true">${dots}</span></div>
+      <div class="lg"><span><i class="g-P3A"></i>P3A</span><span><i class="g-P3B"></i>P3B</span><span><i class="g-LDR"></i>Leader</span><span class="sw">geser ⟷ untuk hari lain</span></div>`;
+  }
+  function bindShiftPanel(el, withMe) {
+    if (!el) return;
+    const paint = dir => { el.innerHTML = shiftPanel(st.dashDay, withMe); if (dir) { el.classList.remove("sl-l", "sl-r"); void el.offsetWidth; el.classList.add(dir > 0 ? "sl-l" : "sl-r"); } wire(); markStrip(); };
+    const goDay = d => { const n = Math.max(0, Math.min(6, st.dashDay + d)); if (n === st.dashDay) return; st.dashDay = n; paint(d); };
+    function wire() {
+      el.querySelectorAll("[data-hd]").forEach(b => b.onclick = () => goDay(Number(b.dataset.hd)));
+      el.querySelectorAll("[data-gf]").forEach(b => b.onclick = () => { st.dashGrp = b.dataset.gf; LS.set("ms3.dgrp", st.dashGrp); paint(0); });
+      el.querySelectorAll("[data-sh]").forEach(b => b.onclick = () => { if (el._swiped) return; shiftSheet(st.dashDay, b.dataset.sh); });
+    }
+    let x0 = null, y0 = 0;
+    el.addEventListener("touchstart", e => { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; el._swiped = false; }, { passive: true });
+    el.addEventListener("touchend", e => { if (x0 == null) return; const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0; x0 = null;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) { el._swiped = true; setTimeout(() => el._swiped = false, 350); goDay(dx < 0 ? 1 : -1); } });
+    el._goDay = d => { st.dashDay = d; paint(0); };
+    wire();
+  }
+  function markStrip() { document.querySelectorAll(".week-strip [data-sd]").forEach(b => b.classList.toggle("sel", Number(b.dataset.sd) === st.dashDay)); }
+  function shiftSheet(off, k) {
+    const ds = iso(addDays(parse(TODAY()), off)), me = st.guest ? "" : meU();
+    const s = sheet(`<h3>Shift ${dayName(ds, off)}</h3><p class="sub">${fmtLong(ds)}</p><div class="seg" id="shSeg"></div><div id="shBody"></div><div class="sheet-acts"><button class="btn pri" data-close>Tutup</button></div>`);
+    const paint = k => {
+      const by = shiftData(ds), tabs = [["1", "Shift 1"], ["2", "Shift 2"], ["3", "Shift 3"], ["off", "Off/Cuti"]];
+      $("#shSeg", s).innerHTML = tabs.map(([v, t]) => `<button data-k="${v}" class="${v === String(k) ? "on" : ""}">${t} · ${v === "off" ? by.off.length + by.cuti.length + by.none.length : by[v].length}</button>`).join("");
+      const ppl = k === "off" ? [...by.off, ...by.cuti, ...by.none] : by[k];
+      const groups = ["P3A", "P3B", "LDR"].map(g => [g, ppl.filter(x => grpOf(x) === g)]).filter(([, l]) => l.length);
+      $("#shBody", s).innerHTML = groups.map(([g, l]) => `<div class="sh-g"><h4><i class="g-${g}"></i>${GRP_NM[g]} <small>${l.length} orang</small></h4>
+        ${l.map(x => { const b = A(ds, x.username), c = codeOf(b), t = TEAMS.find(t => t.id === x.tim);
+          return `<div class="sh-r ${x.username === me ? "me" : ""}"><span class="code ${c.c}">${c.t}</span><span><b>${esc(x.surname)}${x.username === me ? " (saya)" : ""}</b><small>${esc(x.jabatan || "")}${t && t.title ? " · " + esc(cap(t.title.toLowerCase()).replace(/p3(a|b)/g, x => x.toUpperCase())) : ""}</small></span>
+            <span class="hr">${b && b.st !== "O" && b.st !== "C" ? esc(hours(ds, b, x)) : esc(statusText(b, ds))}</span></div>`; }).join("")}</div>`).join("") || `<div class="empty">Tidak ada orang di daftar ini.</div>`;
+      $("#shSeg", s).querySelectorAll("[data-k]").forEach(b => b.onclick = () => paint(b.dataset.k));
+    };
+    paint(String(k));
+  }
+  function statSheet(key, agg, scopeTeam, pk) {
+    const def = STAT_DEF.find(x => x[0] === key), items = agg.L[key] || [];
+    const row = it => { const c = codeOf(it.a); return `<button class="st-r" data-gd="${it.d}"><span class="code ${c.c}">${c.t}</span><span><b>${HR[dow(parse(it.d))]}, ${fmtDM(it.d)}</b><small>${esc(statusText(it.a, it.d))}${it.t ? " · lembur " + it.t : ""}</small></span><span class="hr">${it.a.st !== "O" && it.a.st !== "C" ? esc(hours(it.d, it.a, st.byU[it.u])) : ""}</span></button>`; };
+    let body;
+    if (!items.length) body = `<div class="empty">Tidak ada tanggal pada periode ini.</div>`;
+    else if (!scopeTeam) body = `<div class="st-list">${items.map(row).join("")}</div>`;
+    else {
+      const per = {}; items.forEach(it => (per[it.u] = per[it.u] || []).push(it));
+      body = Object.keys(per).sort((a, b) => per[b].length - per[a].length || a.localeCompare(b)).map(u => { const x = st.byU[u] || { surname: u };
+        return `<details class="st-m"><summary><i class="g-${grpOf(x)}"></i><b>${esc(x.surname)}</b><span class="n">${per[u].length} hari</span></summary><div class="st-list">${per[u].map(row).join("")}</div></details>`; }).join("");
+    }
+    const s = sheet(`<h3>${def[3]} · ${items.length} hari</h3><p class="sub">${scopeTeam ? "Seluruh tim" : "Saya"} · periode ${periodLabel(pk)}. ${def[4]}</p>${body}
+      ${key === "sun" || key === "ot" ? `<p class="hint" style="text-align:left">Minggu yang diikuti libur pengganti Senin–Jumat berikutnya tidak dihitung lembur (Aturan Utama).</p>` : ""}
+      <div class="sheet-acts"><button class="btn pri" data-close>Tutup</button></div>`);
+    s.querySelectorAll("[data-gd]").forEach(b => b.onclick = () => { closeSheet(); const d = parse(b.dataset.gd); st.jday = b.dataset.gd; st.jmonth = [d.getFullYear(), d.getMonth()]; st.jmode = "day"; LS.set("ms3.jmode2", "day"); go("jadwal"); });
+  }
   function greet() { const h = new Date().getHours(); return h < 11 ? "selamat pagi" : h < 15 ? "selamat siang" : h < 18 ? "selamat sore" : "selamat malam"; }
   function renderDash() {
-    const td = TODAY(), me = meU(), a = A(td, me), m = st.user;
-    const onShift = k => st.members.filter(x => { const b = A(td, x.username); return b && b.st !== "O" && b.st !== "C" && Math.min(b.s, 3) === k; });
-    const col = k => { const l = onShift(k); const show = l.slice(0, 5).map(x => `<span class="${x.username === me ? "me" : ""}">${esc(x.surname)}${x.username === me ? " (saya)" : ""}</span>`).join("<br>"); return `<div><b>Shift ${k}</b>${show || "<span style='opacity:.6'>—</span>"}${l.length > 5 ? `<br><span style="opacity:.75">+${l.length - 5} lainnya</span>` : ""}</div>`; };
+    const td = TODAY(), me = meU(), m = st.user;
+    if (st.dashDay == null) st.dashDay = 0; if (!st.dashGrp) st.dashGrp = LS.get("ms3.dgrp") || "all";
     if (!st.period) st.period = periodOf(td);
     const pk = st.period, pf = pk, pt = periodEnd(pk);
     const scopeTeam = st.dashScope === "team" && lvl() >= 2;
-    const agg = { work: 0, wd: 0, sat: 0, sun: 0, off: 0, cuti: 0, s3: 0 };
-    (scopeTeam ? st.members : [st.byU[me]]).filter(Boolean).forEach(x => { const s = stats(x.username, pf, pt); Object.keys(agg).forEach(k => agg[k] += s[k]); });
+    const agg = { L: {} }; STAT_DEF.forEach(([k]) => { agg[k] = 0; agg.L[k] = []; });
+    (scopeTeam ? st.members : [st.byU[me]]).filter(Boolean).forEach(x => { const s = stats(x.username, pf, pt); STAT_DEF.forEach(([k]) => { agg[k] += s[k]; agg.L[k].push(...s.L[k]); }); });
     const periods = [periodOf(iso(addDays(parse(periodOf(td)), -1))), periodOf(td), periodOf(iso(addDays(parse(periodEnd(periodOf(td))), 1)))];
     const pend = st.reqs.filter(r => r.Status === "Menunggu"), myPend = pend.filter(r => r.Username === me);
-    const strip = Array.from({ length: 7 }, (_, i) => { const d = addDays(new Date(), i), ds = iso(d), c = codeOf(A(ds, me)); return `<div class="wd ${i === 0 ? "td" : ""}"><small>${HRS[d.getDay()]}</small><b>${d.getDate()}</b><span class="code ${c.c}">${c.t}</span></div>`; }).join("");
+    const strip = Array.from({ length: 7 }, (_, i) => { const d = addDays(new Date(), i), ds = iso(d), c = codeOf(A(ds, me)); return `<button class="wd ${i === 0 ? "td" : ""} ${i === st.dashDay ? "sel" : ""}" data-sd="${i}" aria-label="Lihat shift ${fmtLong(ds)}"><small>${HRS[d.getDay()]}</small><b>${d.getDate()}</b><span class="code ${c.c}">${c.t}</span></button>`; }).join("");
     const ws = iso(wkStart(new Date())), nws = iso(addDays(parse(ws), 7)), lastFinal = st.notifs.find(n => /sudah final/.test(n.Judul));
     $("#pg").innerHTML = head("Dashboard") + `
       ${lastFinal && st.unread ? `<button class="alert-card final" id="goFinal"><span class="ic green" style="width:42px;height:42px;border-radius:14px;display:grid;place-items:center">${ic("check")}</span><span><b>${esc(lastFinal.Judul)}</b><small>${esc(lastFinal.Isi)}</small></span><span class="go">${ic("right")}</span></button>` : ""}
       <section class="hero" style="${lastFinal && st.unread ? "margin-top:12px" : ""}">
         <div class="hero-top"><div class="ava">${esc(initials(m.surname))}</div><div><small>Halo, ${greet()}</small><b>${esc(m.surname)}</b></div><span class="role">${esc(m.otoritas)}</span></div>
-        <div class="today"><div class="today-h"><span>Shift hari ini</span><span>${fmtShort(td)}</span></div>
-          <div class="mine">Saya: ${esc(statusText(a, td))}</div><div class="hrs">${a && a.st !== "O" && a.st !== "C" ? esc(hours(td, a, st.byU[me])) + " WIB" : a ? "Selamat beristirahat" : "Jadwal belum diisi"}</div>
-          <div class="today-cols">${col(1)}${col(2)}${col(3)}</div></div>
+        <div class="today" id="todayP">${shiftPanel(st.dashDay, true)}</div>
       </section>
       <div class="sec-h"><h2>7 hari ke depan</h2><small>Minggu ini: ${isFinal(ws) ? "final ✓" : "draft"} · depan: ${isFinal(nws) ? "final ✓" : "draft"}</small></div>
       <div class="week-strip">${strip}</div>
       ${lvl() >= 2 && pend.length ? `<button class="alert-card" id="goPend"><span class="ic orange" style="width:42px;height:42px;border-radius:14px;display:grid;place-items:center">${ic("msg")}</span><span><b>${pend.length} pengajuan menunggu persetujuan</b><small>${pend.some(r => r.Peringatan) ? "Ada off 2x seminggu yang perlu konfirmasi" : "Ketuk untuk memeriksa"}</small></span><span class="go">${ic("right")}</span></button>` : ""}
       ${myPend.length ? `<button class="alert-card" id="goMine"><span class="ic blue" style="width:42px;height:42px;border-radius:14px;display:grid;place-items:center">${ic("clock")}</span><span><b>${myPend.length} pengajuan Anda masih menunggu</b><small>Lihat riwayat pengajuan</small></span><span class="go">${ic("right")}</span></button>` : ""}
-      <div class="sec-h"><h2>Ringkasan periode</h2><small>tgl 20 → 19</small></div>
+      <div class="sec-h"><h2>Ringkasan periode</h2><small>tgl 20 → 19 · ketuk untuk rincian</small></div>
       <div class="chips">${periods.map(k => `<button class="chip-f ${k === pk ? "on" : ""}" data-p="${k}">${periodLabel(k)}</button>`).join("")}</div>
       ${lvl() >= 2 ? `<div class="seg" style="margin-top:10px"><button data-sc="me" class="${!scopeTeam ? "on" : ""}">Saya</button><button data-sc="team" class="${scopeTeam ? "on" : ""}">Seluruh tim (${st.members.length})</button></div>` : `<div style="height:12px"></div>`}
-      <div class="stats">
-        <div class="stat"><div class="ic blue">${ic("briefcase")}</div><b>${agg.work}<small>hari</small></b><p>Hari kerja</p></div>
-        <div class="stat"><div class="ic green">${ic("clock")}</div><b>${agg.wd}<small>hari</small></b><p>Lembur hari biasa</p></div>
-        <div class="stat"><div class="ic orange">${ic("bolt")}</div><b>${agg.sat}<small>hari</small></b><p>Overtime Sabtu</p></div>
-        <div class="stat"><div class="ic pink">${ic("sun")}</div><b>${agg.sun}<small>hari</small></b><p>Lembur Minggu</p></div>
-        <div class="stat"><div class="ic violet">${ic("off")}</div><b>${agg.off}<small>hari</small></b><p>Off</p></div>
-        <div class="stat"><div class="ic teal">${ic("cal")}</div><b>${agg.cuti}<small>hari</small></b><p>Cuti / ijin</p></div>
-      </div>
+      <div class="stats">${STAT_DEF.map(([k, c, i, t]) => `<button class="stat" data-st="${k}"><div class="ic ${c}">${ic(i)}</div><b>${agg[k]}<small>hari</small></b><p>${t}</p><span class="go">${ic("right", 16)}</span></button>`).join("")}</div>
       <p class="hint" style="text-align:left;margin:12px 4px">Lembur Minggu hanya dihitung bila tidak ada libur pengganti Senin–Jumat berikutnya (Aturan Utama v1.5).</p>`;
     bindHead();
+    const tp = $("#todayP"); bindShiftPanel(tp, true);
+    $("#pg").querySelectorAll("[data-sd]").forEach(b => b.onclick = () => { const d = Number(b.dataset.sd), dir = d - st.dashDay; if (!dir) return; tp._goDay(d); tp.classList.remove("sl-l", "sl-r"); void tp.offsetWidth; tp.classList.add(dir > 0 ? "sl-l" : "sl-r"); tp.scrollIntoView({ behavior: "smooth", block: "nearest" }); });
+    $("#pg").querySelectorAll("[data-st]").forEach(b => b.onclick = () => statSheet(b.dataset.st, agg, scopeTeam, pk));
     $("#pg").querySelectorAll("[data-p]").forEach(b => b.onclick = async () => { st.period = b.dataset.p; try { await loadRange(b.dataset.p, iso(addDays(parse(periodEnd(b.dataset.p)), 7))); } catch (e) { toast(e.message); } renderDash(); });
     $("#pg").querySelectorAll("[data-sc]").forEach(b => b.onclick = () => { st.dashScope = b.dataset.sc; renderDash(); });
     if ($("#goPend")) $("#goPend").onclick = () => { st.rtab = "appr"; go("req"); };
@@ -802,7 +972,9 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
       body = `<div class="mnav" style="margin-bottom:10px"><button data-dd="-1" aria-label="Hari sebelumnya">${ic("left")}</button><b>${fmtLong(st.jday)}</b><button data-dd="1" aria-label="Hari berikutnya">${ic("right")}</button></div>
         <div class="tools">${adm ? `<button class="btn sm" id="dedit">${ic("edit", 18)}Atur hari ini</button>` : ""}${exp}</div>` + boardHTML([st.jday]) + legendHTML();
     } else if (jm === "month") {
-      body = `<div class="tools">${exp}${adm ? `<button class="btn sm" id="impPay">${ic("upload", 18)}Impor Excel</button>` : ""}</div>` + monthHTML(y, mo) + payLegendHTML();
+      const mv = st.mview || "pay";
+      body = `<div class="tools"><div class="mini-seg" role="tablist"><button data-mv="pay" class="${mv === "pay" ? "on" : ""}">Payroll</button><button data-mv="draft" class="${mv === "draft" ? "on" : ""}">Mingguan</button></div>${exp}${adm ? `<button class="btn sm" id="impPay">${ic("upload", 18)}Impor Excel</button>` : ""}${adm && st.members.some(isLeader) ? `<button class="btn sm" id="satG">${ic("users", 18)}Sabtu leader</button>` : ""}</div>`
+        + (mv === "pay" ? monthHTML(y, mo) + payLegendHTML() : monthDraftHTML(y, mo) + legendHTML());
     } else body = `<div class="tools"><button class="btn sm" id="exp">${ic("download", 18)}Ekspor</button></div>` + myCalHTML(y, mo);
     $("#pg").innerHTML = head("Jadwal") + `
       ${jm !== "day" ? `<div class="mnav"><button data-m="-1" aria-label="Bulan sebelumnya">${ic("left")}</button><b>${BULAN[mo]} ${y}</b><button data-m="1" aria-label="Bulan berikutnya">${ic("right")}</button></div>` : ""}
@@ -824,9 +996,12 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
     if ($("#wkShare")) $("#wkShare").onclick = () => shareWeek(st.jweek);
     if ($("#exp")) $("#exp").onclick = exportSheet;
     if ($("#impPay")) $("#impPay").onclick = importExcel;
+    pg.querySelectorAll("[data-mv]").forEach(b => b.onclick = () => { if (b.dataset.mv === (st.mview || "pay")) return; st.mview = b.dataset.mv; LS.set("ms3.mview", st.mview); st._anim = "f"; render(); });
+    if ($("#satG")) $("#satG").onclick = satModeSheet;
+    pg.querySelectorAll("[data-gw]").forEach(b => b.onclick = () => { st.jweek = b.dataset.gw; st.jmode = "week"; LS.set("ms3.jmode2", "week"); st._anim = "f"; render(); });
+    if (adm && !st.guest && (jm === "week" || jm === "day" || (jm === "month" && st.mview === "draft"))) enableDnD(pg);
     if ($("#gReq")) $("#gReq").onclick = e => { e.preventDefault(); go("req"); };
-    const wrap = $(".board-wrap"), td = wrap && wrap.querySelector(".today");
-    if (td) wrap.scrollLeft = Math.max(0, td.offsetLeft - 70);
+    pg.querySelectorAll(".board-wrap").forEach(wrap => { const td = wrap.querySelector(".today"); if (td) wrap.scrollLeft = Math.max(0, td.offsetLeft - 70); });
   }
   async function ensureMonth() {
     const [y, mo] = st.jmonth; const f = iso(addDays(wkStart(new Date(y, mo, 1)), -7)), t = iso(addDays(new Date(y, mo + 1, 0), 14));
@@ -853,7 +1028,7 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
     const teams = TEAMS.filter(t => teamMembers(t.id).length);
     const grpTeams = g => teams.filter(t => t.grp === g);
     let h = `<div class="board-wrap ${forExport ? "x" : ""}"><table class="board"><thead><tr><th class="lbl">Tanggal</th>`;
-    days.forEach(d => { const w = parse(d).getDay(); h += `<th colspan="3" class="dh ${w === 6 ? "sat" : w === 0 ? "sun" : ""} ${d === td && !forExport ? "today" : ""}"><button data-day="${d}" title="Lihat harian">${days.length > 1 ? fmtLong(d).replace(/ \d{4}$/, "") : fmtLong(d)}</button></th>`; });
+    days.forEach(d => { const w = parse(d).getDay(); h += `<th colspan="3" class="dh ${w === 6 ? "sat" : w === 0 ? "sun" : ""} ${d === td && !forExport ? "today" : ""}"><button data-day="${d}" title="Lihat harian">${days.length > 1 ? fmtLong(d).replace(/ \d{4}$/, "") : fmtLong(d)}${w === 6 && d >= SAT_BASE && st.members.some(isGrup) ? ` <small class="gturn">· Grup ${satTurn(d)}</small>` : ""}</button></th>`; });
     h += `</tr><tr><th class="lbl">Shift</th>${days.map(() => `<th>Shift 1</th><th>Shift 2</th><th>Shift 3</th>`).join("")}</tr></thead><tbody>`;
     teams.forEach(t => {
       const g = t.grp, gl = g ? grpTeams(g) : [], first = g && gl[0] === t, rows = g ? 1 + 2 * (gl.length - 1) : 1;
@@ -870,13 +1045,116 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
       h += `<tr><td class="lbl">${t.id === "LAIN" ? "Lain" : t.id}</td>`;
       days.forEach(d => {
         for (let k = 1; k <= 3; k++) {
-          if (isSun(d) && g) { if (!first) continue; const c = chipsFor(d, gNames, k); h += `<td class="c ${c.out ? "out" : ""}" rowspan="${rows}">${c.html}</td>`; continue; }
-          const c = chipsFor(d, teamMembers(t.id), k); h += `<td class="c ${c.out ? "out" : ""}">${c.html}</td>`;
+          if (isSun(d) && g) { if (!first) continue; const c = chipsFor(d, gNames, k); h += `<td class="c ${c.out ? "out" : ""}" rowspan="${rows}" data-d="${d}" data-k="${k}">${c.html}</td>`; continue; }
+          const c = chipsFor(d, teamMembers(t.id), k); h += `<td class="c ${c.out ? "out" : ""}" data-d="${d}" data-k="${k}">${c.html}</td>`;
         }
       });
       h += `</tr>`;
     });
     return h + `</tbody></table></div>`;
+  }
+  // papan bulanan versi template mingguan: minggu-minggu dalam bulan, ditumpuk
+  function monthDraftHTML(y, mo, forExport) {
+    return monthWeeks(y, mo).map(w => { const we = iso(addDays(parse(w), 6)), fin = isFinal(w);
+      return `<div class="mwk"><div class="mwk-h"><b>${fmtDM(w)} – ${fmtDM(we)}</b><span class="pill ${fin ? "ok" : "wait"}">${fin ? "Final" : "Draft"}</span>${forExport ? "" : `<button class="lnk" data-gw="${w}">Buka mingguan ›</button>`}</div>${boardHTML(weekDays(w), forExport)}</div>`; }).join("");
+  }
+  // ---------- drag & drop nama di papan (Admin) — pindah shift di hari yang sama ----------
+  function enableDnD(root) {
+    let drag = null, pend = null, timer = null, ghost = null, over = null, blockClick = false;
+    const pt = e => e.touches ? e.touches[0] || e.changedTouches[0] || null : e;
+    const targetAt = (x, y) => { const el = document.elementFromPoint(x, y); const td = el && el.closest("td.c[data-d]"); return td && drag && td.dataset.d === drag.d ? td : null; };
+    function begin(p) {
+      const n = pend.n, a = A(n.dataset.d, n.dataset.u); if (!a) return;
+      drag = { n, d: n.dataset.d, u: n.dataset.u, a, k: Math.min(a.s, 3) };
+      ghost = n.cloneNode(true); ghost.className = n.className + " dnd-ghost"; ghost.style.width = n.offsetWidth + "px"; document.body.appendChild(ghost);
+      n.classList.add("dnd-src"); document.body.classList.add("dnd-on");
+      root.querySelectorAll(`td.c[data-d="${drag.d}"]`).forEach(td => td.classList.add("dz"));
+      if (navigator.vibrate) try { navigator.vibrate(12); } catch (e) { }
+      move(p);
+    }
+    function move(p) {
+      if (!p || !isFinite(p.clientX)) return; drag.last = p;
+      ghost.style.transform = `translate(${p.clientX - ghost.offsetWidth / 2}px, ${p.clientY - 22}px)`;
+      const td = targetAt(p.clientX, p.clientY); if (over !== td) { if (over) over.classList.remove("dz-on"); over = td; if (td) td.classList.add("dz-on"); }
+      const wrap = drag.n.closest(".board-wrap"); if (wrap) { const r = wrap.getBoundingClientRect(); if (p.clientX > r.right - 36) wrap.scrollLeft += 14; else if (p.clientX < r.left + 70) wrap.scrollLeft -= 14; }
+      if (p.clientY < 70) window.scrollBy(0, -14); else if (p.clientY > innerHeight - 110) window.scrollBy(0, 14);
+    }
+    function end(p, cancel) {
+      clearTimeout(timer); timer = null; pend = null;
+      if (!drag) return;
+      if (!p || !isFinite(p.clientX)) p = drag.last || {}; const td = cancel || !isFinite(p.clientX) ? null : targetAt(p.clientX, p.clientY), d = drag;
+      ghost.remove(); ghost = null; d.n.classList.remove("dnd-src"); document.body.classList.remove("dnd-on");
+      root.querySelectorAll("td.dz").forEach(x => x.classList.remove("dz", "dz-on")); over = null; drag = null;
+      blockClick = true; setTimeout(() => blockClick = false, 350);
+      if (!td) return; const k = Number(td.dataset.k); if (k === d.k) return;
+      dropTo(d, k);
+    }
+    async function dropTo(d, k) {
+      const m = st.byU[d.u], a = d.a, cell = { d: d.d, u: d.u, s: k, st: a.st === "O" || a.st === "C" ? a.st : a.s === 4 ? "N" : a.st, rq: !!a.rq };
+      let why = ""; if (isUrgent(d.d, a, cell, m)) { why = await askReason("Alasan perubahan mendadak", `${esc(m ? m.surname : d.u)} pindah ke Shift ${k} pada ${fmtLong(d.d)} — kurang dari 24 jam sebelum shift.`); if (!why) return; }
+      saveCells([cell], `${m ? m.surname : d.u} dipindah ke Shift ${k} (${fmtDM(d.d)}).`, why);
+    }
+    if (root._dndBlock) root.removeEventListener("click", root._dndBlock, true);
+    root._dndBlock = e => { if (blockClick && e.target.closest(".board")) { e.stopPropagation(); e.preventDefault(); } };
+    root.addEventListener("click", root._dndBlock, true);
+    root.querySelectorAll(".board .nm").forEach(n => {
+      n.setAttribute("draggable", "false"); n.classList.add("dnd");
+      n.addEventListener("touchstart", e => { if (e.touches.length > 1) return; const p = pt(e); pend = { n, x: p.clientX, y: p.clientY, clientX: p.clientX, clientY: p.clientY }; timer = setTimeout(() => { if (pend) begin(pend.last || pend); }, 320); }, { passive: true });
+      n.addEventListener("touchmove", e => { const p = pt(e);
+        if (drag) { e.preventDefault(); move(p); return; }
+        if (pend && p) { pend.last = { clientX: p.clientX, clientY: p.clientY }; if (Math.hypot(p.clientX - pend.x, p.clientY - pend.y) > 9) { clearTimeout(timer); pend = null; } } }, { passive: false });
+      n.addEventListener("touchend", e => end(pt(e)), { passive: true });
+      n.addEventListener("touchcancel", e => end(pt(e), true), { passive: true });
+      n.addEventListener("contextmenu", e => { if (pend || drag) e.preventDefault(); });
+      n.addEventListener("mousedown", e => { if (e.button !== 0) return; e.preventDefault(); pend = { n, x: e.clientX, y: e.clientY, mouse: true };
+        const mm = ev => { if (drag) return move(ev); if (pend && Math.hypot(ev.clientX - pend.x, ev.clientY - pend.y) > 6) begin(ev); };
+        const mu = ev => { document.removeEventListener("mousemove", mm); document.removeEventListener("mouseup", mu); end(ev); };
+        document.addEventListener("mousemove", mm); document.addEventListener("mouseup", mu); });
+    });
+  }
+  // ---------- Sabtu shift leader / AM: Normal atau Grup A–D ----------
+  function satModeSheet() {
+    const L = st.members.filter(isLeader), sats = []; let d = parse(SAT_BASE); while (iso(d) < TODAY()) d = addDays(d, 7);
+    for (let i = 0; i < 8; i++) sats.push(iso(addDays(d, 7 * i)));
+    const draft = {}; L.forEach(m => draft[m.username] = { mode: m.modeSabtu === "Grup" ? "Grup" : "Normal", grup: m.grupSabtu || "" });
+    const s = sheet(`<h3>Sabtu shift leader &amp; Ast. Manager</h3><p class="sub"><b>Normal</b>: Sabtu masuk 5 jam dan bisa lembur (Overtime Sabtu). <b>Grup</b>: Sabtu hanya masuk saat giliran grupnya, jam 07.00–15.00 (jam normal, bukan lembur); Sabtu lain off.</p>
+      <div id="smL"></div>
+      <div class="sec-h" style="margin-top:14px"><h2>Giliran Sabtu</h2><small>putar tiap 4 minggu</small></div>
+      <div class="gt-grid">${sats.map(x => `<div><small>${fmtDM(x)}</small><b>Grup ${satTurn(x)}</b></div>`).join("")}</div>
+      <p class="err hide" id="smE"></p>
+      <div class="sheet-acts"><button class="btn ghost" data-close>Batal</button><button class="btn pri" id="smS">Simpan</button></div>`);
+    const paint = () => { $("#smL", s).innerHTML = L.map(m => { const x = draft[m.username];
+      return `<div class="sm-r"><span class="ava">${esc(initials(m.surname))}</span><span class="tx"><b>${esc(m.surname)}</b><small>${esc(m.jabatan || "")}</small></span>
+        <div class="mini-seg"><button data-u="${m.username}" data-md="Normal" class="${x.mode === "Normal" ? "on" : ""}">Normal</button><button data-u="${m.username}" data-md="Grup" class="${x.mode === "Grup" ? "on" : ""}">Grup</button></div>
+        ${x.mode === "Grup" ? `<div class="gpick">${GRUP.map(g => `<button data-u="${m.username}" data-g="${g}" class="${x.grup === g ? "on" : ""}">${g}</button>`).join("")}</div>` : ""}</div>`; }).join("");
+      $("#smL", s).querySelectorAll("[data-md]").forEach(b => b.onclick = () => { const x = draft[b.dataset.u]; x.mode = b.dataset.md; if (x.mode === "Grup" && !x.grup) x.grup = "A"; paint(); });
+      $("#smL", s).querySelectorAll("[data-g]").forEach(b => b.onclick = () => { draft[b.dataset.u].grup = b.dataset.g; paint(); }); };
+    paint();
+    $("#smS", s).onclick = async () => {
+      const list = L.map(m => ({ username: m.username, mode: draft[m.username].mode, grup: draft[m.username].grup }));
+      const btn = $("#smS", s); btn.disabled = true;
+      try { await api("setSatMode", { list }); } catch (e) { const er = $("#smE", s); er.textContent = e.message; er.classList.remove("hide"); btn.disabled = false; return; }
+      list.forEach(x => { const m = st.byU[x.username]; if (m) { m.modeSabtu = x.mode; m.grupSabtu = x.mode === "Grup" ? x.grup : ""; } });
+      closeSheet(); render(); toast("Pengaturan Sabtu tersimpan.");
+      if (list.some(x => x.mode === "Grup")) applyGrupSat();
+    };
+  }
+  // isi Sabtu di jadwal: giliran grup → Shift 1 (07.00–15.00), bukan giliran → Off. Cuti tidak diubah.
+  async function applyGrupSat() {
+    const [y, mo] = st.jmonth || [new Date().getFullYear(), new Date().getMonth()];
+    const from = [iso(new Date(y, mo, 1)), SAT_BASE, TODAY()].sort().pop(), to = iso(new Date(y, mo + 2, 0));
+    const ok = await confirmBox("Terapkan giliran Sabtu ke jadwal?", `Sabtu ${fmtDM(from)} – ${fmtDM(to)}: leader mode Grup diisi <b>Shift 1 (07.00–15.00)</b> saat giliran grupnya dan <b>Off</b> di Sabtu lain. Cuti tidak diubah.`, "Terapkan");
+    if (!ok) return;
+    try { await loadRange(from < st.range[0] ? from : st.range[0], to > st.range[1] ? to : st.range[1]); } catch (e) { }
+    const cells = []; let d = parse(from); while (dow(d) !== 5) d = addDays(d, 1);
+    for (; iso(d) <= to; d = addDays(d, 7)) { const ds = iso(d), g = satTurn(ds);
+      st.members.filter(isGrup).forEach(m => { const a = A(ds, m.username); if (a && a.st === "C") return;
+        const want = m.grupSabtu === g ? { s: 1, st: "N" } : { s: a ? Math.min(a.s, 3) : 1, st: "O" };
+        if (!a || a.st !== want.st || (want.st !== "O" && a.s !== want.s)) cells.push({ d: ds, u: m.username, s: want.s, st: want.st, rq: false }); }); }
+    if (!cells.length) return toast("Jadwal Sabtu sudah sesuai giliran grup.");
+    const urgent = cells.some(c => isUrgent(c.d, A(c.d, c.u), c, st.byU[c.u]));
+    let why = ""; if (urgent) { why = await askReason("Alasan perubahan mendadak", "Sebagian Sabtu kurang dari 24 jam lagi."); if (!why) return; }
+    saveCells(cells, `Giliran Sabtu grup diterapkan (${cells.length} sel).`, why);
   }
   // papan bulanan = tampilan payroll (orang × tanggal)
   function payGroups() {
@@ -1143,14 +1421,15 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
     $("#pg").innerHTML = head("Member") + `
       <div class="search">${ic("search", 20)}<input id="mq" placeholder="Cari nama, No. Reg, jabatan" value="${esc(st.q)}" aria-label="Cari member"></div>
       <div class="chips">${roles.map(r => `<button class="chip-f ${f === r ? "on" : ""}" data-f="${r}">${r}${r !== "Semua" ? ` · ${list.filter(m => m.otoritas === r).length}` : ""}</button>`).join("")}</div>
-      ${sa ? `<div class="tools"><button class="btn pri sm" id="madd">${ic("plus", 18)}Tambah member</button><button class="btn sm" id="mimp">${ic("upload", 18)}Impor Excel</button></div>` : `<div style="height:10px"></div>`}
+      ${sa || lvl() >= 2 ? `<div class="tools">${sa ? `<button class="btn pri sm" id="madd">${ic("plus", 18)}Tambah member</button><button class="btn sm" id="mimp">${ic("upload", 18)}Impor Excel</button>` : ""}<button class="btn sm" id="msat">${ic("users", 18)}Sabtu leader</button></div>` : `<div style="height:10px"></div>`}
       ${pendAcc.length ? `<div class="sec-h" style="margin-top:6px"><h2>Permintaan akun</h2><small>${pendAcc.length} menunggu</small></div><div class="list">${pendAcc.map(r => `<div class="req"><div class="top"><b>${esc(r.Nama)}</b><span class="pill wait">Menunggu</span></div><p>No. Reg <b>${esc(r.NoReg)}</b> · telp <a href="https://wa.me/${waNum(r.Telepon)}" target="_blank" rel="noopener">${esc(r.Telepon)}</a>${r.Catatan ? `<br>“${esc(r.Catatan)}”` : ""}<br><span style="color:var(--ink-3)">${esc(r.Waktu)}</span></p><div class="acts"><button class="btn no" data-arno="${r.ID}">${ic("x", 18)}Tolak</button><button class="btn ok" data-aryes="${r.ID}">${ic("plus", 18)}Buat akun</button></div></div>`).join("")}</div>` : ""}
       <div class="sec-h" style="margin-top:6px"><h2>${shown.length} member</h2><small>Maintenance &amp; Tooling P3</small></div>
-      <div class="list">${shown.map(m => `<button class="row-card" data-mu="${m.username}"><span class="ava">${esc(initials(m.surname))}</span><span class="tx"><b>${esc(m.surname)}</b><small>${esc(m.jabatan)} · ${esc(m.noReg)} · ${esc(m.area)}${m.payroll ? " · payroll " + esc(m.payroll) : ""}</small></span>${m.aktif === false ? `<span class="pill off">Nonaktif</span>` : `<span class="pill ${ROLE_CLS[m.otoritas] || "mb"}">${esc(m.otoritas)}</span>`}</button>`).join("") || `<div class="empty">Tidak ada member yang cocok.</div>`}</div>`;
+      <div class="list">${shown.map(m => `<button class="row-card" data-mu="${m.username}"><span class="ava">${esc(initials(m.surname))}</span><span class="tx"><b>${esc(m.surname)}</b><small>${esc(m.jabatan)} · ${esc(m.noReg)} · ${esc(m.area)}${m.payroll ? " · payroll " + esc(m.payroll) : ""}${isLeader(m) ? ` · Sabtu: ${isGrup(st.byU[m.username] || m) ? "Grup " + esc((st.byU[m.username] || m).grupSabtu) : "Normal"}` : ""}</small></span>${m.aktif === false ? `<span class="pill off">Nonaktif</span>` : `<span class="pill ${ROLE_CLS[m.otoritas] || "mb"}">${esc(m.otoritas)}</span>`}</button>`).join("") || `<div class="empty">Tidak ada member yang cocok.</div>`}</div>`;
     bindHead();
     const pg = $("#pg");
     $("#mq").oninput = e => { st.q = e.target.value; const pos = e.target.selectionStart; renderMember().then(() => { const i = $("#mq"); i.focus(); i.setSelectionRange(pos, pos); }); };
     pg.querySelectorAll("[data-f]").forEach(b => b.onclick = () => { st.mfilter = b.dataset.f; renderMember(); });
+    if ($("#msat")) $("#msat").onclick = satModeSheet;
     pg.querySelectorAll("[data-mu]").forEach(b => b.onclick = () => memberSheet(list.find(m => m.username === b.dataset.mu)));
     if ($("#madd")) $("#madd").onclick = () => memberSheet(null);
     if ($("#mimp")) $("#mimp").onclick = importMembersXlsx;
@@ -1215,21 +1494,18 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
     catch (e) { st.guest = false; showLogin(e.message); }
   }
   function renderGuestDash() {
-    const td = TODAY();
-    const onShift = k => st.members.filter(x => { const b = A(td, x.username); return b && b.st !== "O" && b.st !== "C" && Math.min(b.s, 3) === k; });
-    const col = k => { const l = onShift(k); return `<div><b>Shift ${k}</b>${l.slice(0, 6).map(x => esc(x.surname)).join("<br>") || "<span style='opacity:.6'>—</span>"}${l.length > 6 ? `<br><span style="opacity:.75">+${l.length - 6} lainnya</span>` : ""}</div>`; };
+    if (st.dashDay == null) st.dashDay = 0; if (!st.dashGrp) st.dashGrp = LS.get("ms3.dgrp") || "all";
     const ws = iso(wkStart(new Date()));
     $("#pg").innerHTML = head("Beranda") + `
       <section class="hero">
         <div class="hero-top"><div class="ava">${ic("eye", 24)}</div><div><small>Selamat datang</small><b>Mode tamu</b></div><span class="role">Hanya melihat</span></div>
-        <div class="today"><div class="today-h"><span>Shift hari ini</span><span>${fmtShort(td)}</span></div>
-          <div class="today-cols">${col(1)}${col(2)}${col(3)}</div></div>
+        <div class="today" id="todayP">${shiftPanel(st.dashDay, false)}</div>
       </section>
       <div class="sec-h"><h2>Jadwal</h2><small>Minggu ini: ${isFinal(ws) ? "final ✓" : "draft"}</small></div>
       <button class="alert-card" id="gJad"><span class="ic blue" style="width:42px;height:42px;border-radius:14px;display:grid;place-items:center">${ic("cal")}</span><span><b>Lihat jadwal bulanan, mingguan, harian</b><small>Hanya melihat, tidak bisa mengubah</small></span><span class="go">${ic("right")}</span></button>
       <button class="alert-card" id="gAcc"><span class="ic orange" style="width:42px;height:42px;border-radius:14px;display:grid;place-items:center">${ic("user")}</span><span><b>Belum punya akun?</b><small>Kirim permintaan akun ke Super Admin</small></span><span class="go">${ic("right")}</span></button>
       <button class="alert-card" id="gGuide"><span class="ic green" style="width:42px;height:42px;border-radius:14px;display:grid;place-items:center">${ic("file")}</span><span><b>Panduan aplikasi</b><small>Cara memakai Shift P3</small></span><span class="go">${ic("right")}</span></button>`;
-    bindHead();
+    bindHead(); bindShiftPanel($("#todayP"), false);
     $("#gJad").onclick = () => go("jadwal"); $("#gAcc").onclick = () => go("req"); $("#gGuide").onclick = guideSheet;
   }
   function renderGuestReq() {
@@ -1272,6 +1548,8 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
     const sec = (t, body, open) => `<details class="gd" ${open ? "open" : ""}><summary>${t}</summary><div>${body}</div></details>`;
     sheet(`<h3>Panduan aplikasi Shift P3</h3><p class="sub">Versi ${APP_VERSION}. Panduan lengkap (PDF) bisa diminta ke Super Admin.</p>
       ${sec("1. Masuk & ganti password", `<ol class="steps"><li>Username = nama panggilan (contoh <b>katoni</b>).</li><li>Password awal diberikan Super Admin. Saat login pertama wajib membuat password baru (min. 6 karakter).</li><li>Lupa password: minta Super Admin menekan <b>Reset password</b>.</li><li>Belum punya akun: <b>Masuk sebagai tamu</b> › <b>Minta akun</b>.</li></ol>`, true)}
+      ${sec("Dashboard (v0.4)", `<ol class="steps"><li>Kartu biru: ketuk <b>Shift 1/2/3</b> untuk melihat semua orang di shift itu, lengkap dengan jabatan, tim, dan jam. Ketuk <b>Off · Cuti</b> untuk daftar yang libur.</li><li><b>Geser kartu ke kiri/kanan</b> (atau tombol ‹ ›, atau ketuk tanggal di "7 hari ke depan") untuk melihat siapa yang masuk besok sampai 6 hari ke depan.</li><li>Tombol <b>Semua / P3A / P3B</b> memisahkan area. Titik kuning = P3A, oranye = P3B, biru = leader.</li><li>Kotak ringkasan periode (hari kerja, lembur hari biasa, overtime Sabtu, lembur Minggu, shift malam, off, cuti) bisa diketuk untuk melihat tanggal-tanggalnya; ketuk tanggal untuk membuka jadwal hari itu.</li></ol>`)}
+      ${sec("Baru di v0.5", `<ol class="steps"><li><b>Bulanan › Mingguan</b>: jadwal sebulan ditampilkan dengan template mingguan (Shift 1/2/3 per tim), minggu demi minggu. Tombol <b>Payroll</b> kembali ke format payroll.</li><li><b>Admin</b>: tekan-tahan nama di papan mingguan/harian (di komputer: klik lalu seret), lalu geser ke kolom Shift lain di <b>hari yang sama</b>. Perubahan &lt; 24 jam sebelum shift tetap wajib diberi alasan.</li><li><b>Sabtu leader</b> (menu Member atau Jadwal › Bulanan, Admin/Super Admin): shift leader &amp; Ast. Manager diatur <b>Normal</b> (Sabtu 5 jam, bisa lembur) atau <b>Grup A–D</b> (Sabtu 07.00–15.00 hanya saat giliran: A 21 Nov, B 28 Nov, C 5 Des, D 12 Des, lalu berulang). Setelah disimpan, giliran bisa langsung diterapkan ke jadwal.</li></ol>`, true)}
       ${sec("2. Melihat jadwal", `<ol class="steps"><li><b>Bulanan</b> = format payroll (angka shift per tanggal). <b>Mingguan</b>/<b>Harian</b> = format draft (Shift 1/2/3 per tim), urutan Minggu → Sabtu. <b>Saya</b> = kalender pribadi.</li><li>Warna: hijau muda = long shift, oranye muda = off, oranye = cuti, hijau terang = overtime Sabtu, ungu = Shift 4 normal.</li><li>Tanda <b class="rqb">R</b> = jadwal dari permintaan member; <b class="rqb p">R</b> = pengajuan masih menunggu; <b class="why">!</b> = perubahan mendadak (ketuk nama untuk melihat alasannya).</li><li>Ketuk nama untuk melihat jam kerja. Tombol <b>Ekspor</b> = Excel / JPG / PDF.</li></ol>`)}
       ${sec("3. Mengajukan off / cuti / tukar / minta shift", `<ol class="steps"><li>Menu <b>Request</b> › pilih jenis › tanggal › catatan › <b>Kirim</b>.</li><li>Off 2x dalam seminggu (Minggu–Sabtu) akan muncul peringatan; wajib dicentang dan dikonfirmasi admin karena hari kerja dihitung ulang.</li><li>Pengajuan kurang dari 24 jam sebelum shift wajib diisi alasannya.</li><li>Status bisa dilihat di <b>Riwayat saya</b>; hasilnya juga masuk notifikasi (ikon lonceng).</li></ol>`)}
       ${sec("4. Notifikasi & update", `<ol class="steps"><li>Ikon lonceng: jadwal minggu sudah final, jadwal Anda diubah, keputusan pengajuan.</li><li>Bila muncul <b>Versi baru aplikasi tersedia</b>, ketuk <b>Perbarui</b>.</li></ol>`)}
@@ -1385,6 +1663,7 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
   const fname = s => s.replace(/[^\w\-.]+/g, "_");
   function viewInfo() {
     const [y, mo] = st.jmonth, jm = st.jmode;
+    if (jm === "month" && st.mview === "draft") return { kind: "monthDraft", weeks: monthWeeks(y, mo), title: `Jadwal Shift ${BULAN[mo]} ${y} (template mingguan) — Plant 3`, base: `Jadwal_Mingguan_${BULAN[mo]}_${y}`, xl: "Excel (format draft mingguan, 1 sheet per minggu)" };
     if (jm === "month") return { kind: "month", title: `Jadwal Shift ${BULAN[mo]} ${y} — Plant 3`, base: `Shift_Payroll_${BULAN[mo]}_${y}`, xl: "Excel payroll (format Shift Payroll)" };
     if (jm === "week") { const ws = st.jweek, we = iso(addDays(parse(ws), 6)); return { kind: "week", days: weekDays(ws), title: `Jadwal Mingguan ${fmtLong(ws)} – ${fmtLong(we)}${isFinal(ws) ? " (FINAL)" : " (DRAFT)"}`, base: `Jadwal_Mingguan_${ws}`, xl: "Excel (format draft jadwal mingguan)" }; }
     if (jm === "day") return { kind: "day", days: [st.jday], title: `Jadwal Harian ${fmtLong(st.jday)}`, base: `Jadwal_Harian_${st.jday}`, xl: "Excel (format draft jadwal)" };
@@ -1410,7 +1689,7 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
   async function captureView(v) {
     await LIB.h2c();
     const [y, mo] = st.jmonth;
-    const content = v.kind === "month" ? monthHTML(y, mo, true) + payLegendHTML() : v.kind === "me" ? myCalHTML(y, mo, true) : boardHTML(v.days, true) + legendHTML();
+    const content = v.kind === "month" ? monthHTML(y, mo, true) + payLegendHTML() : v.kind === "monthDraft" ? monthDraftHTML(y, mo, true) + legendHTML() : v.kind === "me" ? myCalHTML(y, mo, true) : boardHTML(v.days, true) + legendHTML();
     const box = document.createElement("div"); box.className = "cap" + (v.kind === "me" ? " cap-me" : "");
     box.innerHTML = `<div class="cap-h"><img src="${IMG.logo}" alt=""><div><b>${esc(v.title)}</b><small>Maintenance &amp; Tooling P3 · PT. Indospring Tbk · dicetak ${nowStamp()} oleh ${esc(st.user.surname)}</small></div></div>${content}`;
     document.body.appendChild(box);
@@ -1419,7 +1698,7 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
   }
   async function exportPdf(canvas, v) {
     await LIB.pdf();
-    const land = canvas.width > canvas.height * 0.9, doc = new window.jspdf.jsPDF({ orientation: land ? "landscape" : "portrait", unit: "pt", format: v.kind === "month" ? "a3" : "a4" });
+    const land = canvas.width > canvas.height * 0.9, doc = new window.jspdf.jsPDF({ orientation: land ? "landscape" : "portrait", unit: "pt", format: v.kind === "month" || v.kind === "monthDraft" ? "a3" : "a4" });
     const pw = doc.internal.pageSize.getWidth() - 40, ph = doc.internal.pageSize.getHeight() - 40, scale = pw / canvas.width, sliceH = Math.floor(ph / scale);
     for (let y0 = 0, page = 0; y0 < canvas.height; y0 += sliceH, page++) {
       const h = Math.min(sliceH, canvas.height - y0), c = document.createElement("canvas"); c.width = canvas.width; c.height = h;
@@ -1438,6 +1717,7 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
     const [y, mo] = st.jmonth;
     if (v.kind === "month") buildPayroll(wb, y, mo);
     else if (v.kind === "me") buildMine(wb, y, mo);
+    else if (v.kind === "monthDraft") v.weeks.forEach(w => buildDraft(wb, weekDays(w)));
     else buildDraft(wb, v.days);
     const buf = await wb.xlsx.writeBuffer();
     saveBlob(new Blob([buf], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }), fname(v.base + ".xlsx"));
