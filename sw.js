@@ -1,5 +1,5 @@
 /* Service worker aplikasi Shift P3: menyimpan tampilan supaya cepat dibuka; data selalu dari Google Spreadsheet */
-const CACHE = "shift-p3-202611231926";
+const CACHE = "shift-p3-202611261849";
 const SHELL = ["./", "index.html", "config.js", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL))); });   // versi baru menunggu pengguna menekan "Perbarui"
 self.addEventListener("message", e => { if (e.data === "skip") self.skipWaiting(); });
@@ -9,4 +9,9 @@ self.addEventListener("fetch", e => {
   if (e.request.method !== "GET" || u.origin !== location.origin) return;          // server Apps Script & CDN tidak disentuh
   e.respondWith(fetch(e.request).then(r => { const copy = r.clone(); caches.open(CACHE).then(c => c.put(e.request, copy)); return r; })
     .catch(() => caches.match(e.request).then(r => r || caches.match("index.html"))));
+});
+// ketuk notifikasi → buka / fokus aplikasi
+self.addEventListener("notificationclick", e => {
+  e.notification.close();
+  e.waitUntil(self.clients.matchAll({ type: "window", includeUncontrolled: true }).then(cs => { for (const c of cs) { if ("focus" in c) return c.focus(); } return self.clients.openWindow("./"); }));
 });
