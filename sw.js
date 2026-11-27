@@ -1,5 +1,5 @@
 /* Service worker aplikasi Shift P3: menyimpan tampilan supaya cepat dibuka; data selalu dari Google Spreadsheet */
-const CACHE = "shift-p3-202611261849";
+const CACHE = "shift-p3-202611271159";
 const SHELL = ["./", "index.html", "config.js", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL))); });   // versi baru menunggu pengguna menekan "Perbarui"
 self.addEventListener("message", e => { if (e.data === "skip") self.skipWaiting(); });

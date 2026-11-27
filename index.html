@@ -485,6 +485,29 @@ th.dh.hol button{color:#c62828}
 .mg>span:nth-child(2){flex:1} .mg b{display:block;font-size:13.5px} .mg small{font-size:12px;color:var(--ink-2)}
 .mg .ic{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;flex:none}
 .ok-line{display:flex;gap:8px;align-items:center;padding:12px;color:#18915a;font-size:13.5px;font-weight:600}
+/* ---- v0.9 ---- */
+.agn{display:block;margin:4px 4px 2px;padding:4px 7px;border-radius:7px;background:#fff6c7;border:1px solid #f1d65a;color:#5b4700;font-size:11px;font-weight:600;line-height:1.3;text-align:left;white-space:normal;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;cursor:pointer}
+th.dh .agn{max-width:100%}
+.agn.dash{width:100%;margin:10px 0 0;font-size:12.5px;border:0;background:rgba(255,246,199,.95);-webkit-line-clamp:3}
+.agn-add{display:block;margin:2px auto 0;border:1px dashed rgba(0,0,0,.18);background:transparent;color:var(--ink-3);font-size:10.5px;border-radius:6px;padding:1px 8px;opacity:.55;cursor:pointer}
+.agn-add:hover{opacity:1;background:#fffbe3}
+.mdb.hasag{background:#fff2a8;box-shadow:inset 0 -3px 0 #f1c40f}
+.cpb{border:0;background:#e6ebf7;color:var(--blue);border-radius:7px;padding:3px 5px;margin-left:4px;vertical-align:middle;cursor:pointer;line-height:0}
+.cpb:hover{background:#d4ddf3}
+.wk-strip{display:flex;gap:8px;overflow-x:auto;margin:0 0 10px;padding-bottom:2px}
+.wks{display:flex;align-items:center;gap:8px;flex:none;background:#fff;border-radius:14px;padding:7px 8px 7px 12px;box-shadow:0 1px 3px rgba(16,30,84,.08)}
+.wks span b{display:block;font-size:12.5px} .wks span small{font-size:11px;color:var(--warn,#b26a00)} .wks.fin span small{color:#18915a;font-weight:700}
+.wks .btn{padding:6px 10px;font-size:12px}
+.cp-days{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin:6px 0 8px}
+.cp-days button{border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:5px 0;font-weight:800;font-size:13px;color:var(--ink)}
+.cp-days button small{display:block;font-size:10px;font-weight:600;color:var(--ink-3)}
+.cp-days button.on{background:var(--navy-900);border-color:var(--navy-900);color:#fff} .cp-days button.on small{color:rgba(255,255,255,.7)}
+.cp-days button.src{background:#fff2a8;border-color:#f1c40f;opacity:1} .cp-days button.red{color:#d23b2e}
+.cp-wk{display:flex;flex-direction:column;gap:6px;margin:6px 0 8px}
+.cp-wk button{border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:10px;font-weight:700;text-align:left}
+.cp-wk button.on{background:var(--navy-900);border-color:var(--navy-900);color:#fff} .cp-wk button:disabled{opacity:.45}
+.sheet .mini-seg{margin-bottom:4px}
+.mwk-h .wkb{padding:6px 10px;font-size:12.5px;margin-left:4px}
 
 </style>
 </head>
@@ -684,7 +707,7 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
   window.addEventListener("appinstalled", () => { installEvt = null; toast("Aplikasi Shift P3 terpasang di HP."); });
   const isStandalone = () => window.matchMedia && window.matchMedia("(display-mode: standalone)").matches || navigator.standalone;
   async function doInstall() { if (!installEvt) return installHelp(); installEvt.prompt(); try { await installEvt.userChoice; } catch (e) { } installEvt = null; }
-  const APP_VERSION = "0.8";
+  const APP_VERSION = "0.9";
   // versi baru (aplikasi terinstal): tampilkan ajakan memperbarui
   function showUpdateBar(apply) {
     if (document.getElementById("updBar")) return;
@@ -743,7 +766,8 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
     setSync("busy");
     try {
       const r = await api(st.guest ? "guestSchedule" : "schedule", { from, to });
-      setTimeout(syncDevice, 50); st.sched = {}; r.rows.forEach(x => { (st.sched[x.d] || (st.sched[x.d] = {}))[x.u] = { s: x.s, st: x.st, o: x.o || "", rq: x.rq, n: x.n, a: x.a }; });
+      setTimeout(syncDevice, 50); st.sched = {}; r.rows.forEach(x => { (st.sched[x.d] || (st.sched[x.d] = {}))[x.u] = { s: x.s, st: x.st, o: x.o || "", pg: x.pg || "", rq: x.rq, n: x.n, a: x.a }; });
+      st.agenda = {}; (r.agenda || []).forEach(x => st.agenda[x.d] = x);
       st.weeks = {}; (r.weeks || []).forEach(w => st.weeks[w.Mulai] = w);
       setMembers(r.members); st.range = [from, to]; setSync("ok");
     } catch (e) { setSync("err"); throw e; }
@@ -775,9 +799,9 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
   }
   document.addEventListener("keydown", e => { if (e.key === "Escape") closeSheet(); });
   // dialog yang menghasilkan nilai; resolve(null) bila ditutup
-  function ask(html, collect) {
+  function ask(html, collect, onOpen) {
     return new Promise(res => {
-      let done = false; const s = sheet(html); const ov = s.closest(".ov");
+      let done = false; const s = sheet(html); const ov = s.closest(".ov"); if (onOpen) onOpen(s);
       ov._onClose = () => { if (!done) { done = true; res(null); } };
       s.querySelectorAll("[data-ok]").forEach(b => b.onclick = () => { const v = collect ? collect(s, b) : true; if (v === false) return; done = true; closeSheet(); res(v); });
     });
@@ -1083,7 +1107,7 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
   function periodOf(ds) { const d = parse(ds); const s = d.getDate() >= 20 ? new Date(d.getFullYear(), d.getMonth(), 20) : new Date(d.getFullYear(), d.getMonth() - 1, 20); return iso(s); }
   const periodEnd = k => { const s = parse(k); return iso(new Date(s.getFullYear(), s.getMonth() + 1, 19)); };
   const periodLabel = k => `${fmtDM(k)} – ${fmtDM(periodEnd(k))}`;
-  function sundayComp(ds, u) { let seen = 0; for (let i = 1; i <= 5; i++) { const a = A(iso(addDays(parse(ds), i)), u); if (!a) continue; seen++; if (a.st === "O") return true; } return !seen; }
+  function sundayComp(ds, u) { if (pairedOff(ds, u)) return true; let seen = 0; for (let i = 1; i <= 5; i++) { const a = A(iso(addDays(parse(ds), i)), u); if (!a) continue; seen++; if (a.st === "O" && (!a.pg || a.pg === ds)) return true; } return !seen; }
   function stats(u, from, to) {
     const o = { work: 0, wd: 0, sat: 0, sun: 0, ot: 0, off: 0, cuti: 0, s3: 0, hol: 0 }, L = {}, m = st.byU[u]; o.wdMin = 0;
     Object.keys(o).forEach(k => L[k] = []); o.L = L;
@@ -1137,7 +1161,7 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
     return `<div class="today-h"><button class="dnav" data-hd="-1" ${off <= 0 ? "disabled" : ""} aria-label="Hari sebelumnya">${ic("left", 18)}</button>
         <span class="dl"><b>Shift ${dayName(ds, off)}</b><small>${fmtShort(ds)}${holOf(ds) ? ` · <b class="holt">${esc(holOf(ds).n)}</b>` : ""}${dow(parse(ds)) === 6 ? " · Minggu digabung per area" : ""}</small></span>
         <button class="dnav" data-hd="1" ${off >= 6 ? "disabled" : ""} aria-label="Hari berikutnya">${ic("right", 18)}</button></div>
-      ${withMe ? `<div class="mine">Saya: ${esc(statusText(a, ds, st.byU[me]))}</div><div class="hrs">${a && a.st !== "O" && a.st !== "C" ? esc(hours(ds, a, st.byU[me])) + " WIB" : a ? "Selamat beristirahat" : "Jadwal belum diisi"}</div>` : ""}
+      ${st.agenda && st.agenda[ds] ? `<button class="agn dash" data-agd2="${ds}">📌 ${esc(st.agenda[ds].t)}</button>` : ""}${withMe ? `<div class="mine">Saya: ${esc(statusText(a, ds, st.byU[me]))}</div><div class="hrs">${a && a.st !== "O" && a.st !== "C" ? esc(hours(ds, a, st.byU[me])) + " WIB" : a ? "Selamat beristirahat" : "Jadwal belum diisi"}</div>` : ""}
       <div class="grp-seg" role="tablist"><button data-gf="all" class="${f === "all" ? "on" : ""}">Semua</button><button data-gf="P3A" class="${f === "P3A" ? "on" : ""}"><i class="g-P3A"></i>P3A · ${cnt("P3A")}</button><button data-gf="P3B" class="${f === "P3B" ? "on" : ""}"><i class="g-P3B"></i>P3B · ${cnt("P3B")}</button></div>
       <div class="today-cols">${col(1)}${col(2)}${col(3)}</div>
       <div class="today-f"><button class="offln" data-sh="off">Off ${by.off.length} · Cuti ${by.cuti.length}${by.none.length ? ` · Belum diisi ${by.none.length}` : ""} ›</button><span class="dots" aria-hidden="true">${dots}</span></div>
@@ -1149,6 +1173,7 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
     const goDay = d => { const n = Math.max(0, Math.min(6, st.dashDay + d)); if (n === st.dashDay) return; st.dashDay = n; paint(d); };
     function wire() {
       el.querySelectorAll("[data-hd]").forEach(b => b.onclick = () => goDay(Number(b.dataset.hd)));
+      el.querySelectorAll("[data-agd2]").forEach(b => b.onclick = () => agendaSheet(b.dataset.agd2));
       el.querySelectorAll("[data-gf]").forEach(b => b.onclick = () => { st.dashGrp = b.dataset.gf; LS.set("ms3.dgrp", st.dashGrp); paint(0); });
       el.querySelectorAll("[data-sh]").forEach(b => b.onclick = () => { if (el._swiped) return; shiftSheet(st.dashDay, b.dataset.sh); });
     }
@@ -1285,8 +1310,8 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
         <div class="tools">${adm ? `<button class="btn sm" id="dedit">${ic("edit", 18)}Atur hari ini</button>` : ""}${exp}</div>` + boardHTML([st.jday]) + legendHTML();
     } else if (jm === "month") {
       const mv = st.mview || "pay";
-      body = `<div class="tools"><div class="mini-seg" role="tablist"><button data-mv="pay" class="${mv === "pay" ? "on" : ""}">Payroll</button><button data-mv="draft" class="${mv === "draft" ? "on" : ""}">Mingguan</button></div>${exp}${adm ? `<button class="btn sm" id="impPay">${ic("upload", 18)}Impor Excel</button>` : ""}${adm ? `<button class="btn sm" id="dedit">${ic("edit", 18)}Atur per hari</button>` : ""}${adm && st.members.some(isLeader) ? `<button class="btn sm" id="satG">${ic("users", 18)}Sabtu leader</button>` : ""}</div>`
-        + (mv === "pay" ? monthHTML(y, mo) + payLegendHTML() : monthDraftHTML(y, mo) + legendHTML());
+      body = `<div class="tools"><div class="mini-seg" role="tablist"><button data-mv="pay" class="${mv === "pay" ? "on" : ""}">Payroll</button><button data-mv="draft" class="${mv === "draft" ? "on" : ""}">Mingguan</button></div>${exp}${adm ? `<button class="btn sm" id="impPay">${ic("upload", 18)}Impor Excel</button>` : ""}${adm ? `<button class="btn sm" id="dedit">${ic("edit", 18)}Atur per hari</button><button class="btn sm" id="cpAll">${ic("copy", 18)}Copy shift</button>` : ""}${adm && st.members.some(isLeader) ? `<button class="btn sm" id="satG">${ic("users", 18)}Sabtu leader</button>` : ""}</div>`
+        + (mv === "pay" ? `<div class="wk-strip">${monthWeeks(y, mo).map(w => { const fin = isFinal(w); return `<div class="wks ${fin ? "fin" : ""}"><span><b>${fmtDM(w)} – ${fmtDM(iso(addDays(parse(w), 6)))}</b><small>${fin ? "✓ Final" : "Draft"}</small></span>${adm && !st.guest ? (fin ? `<button class="btn sm ghost" data-reop="${w}">Buka</button>` : `<button class="btn sm ok" data-fin="${w}">${ic("send", 14)}Submit</button>`) : ""}</div>`; }).join("")}</div>` + monthHTML(y, mo) + payLegendHTML() : monthDraftHTML(y, mo) + legendHTML());
     } else body = `<div class="tools"><button class="btn sm" id="exp">${ic("download", 18)}Ekspor</button></div>` + myCalHTML(y, mo);
     $("#pg").innerHTML = head("Jadwal") + `
       ${jm !== "day" ? `<div class="mnav"><button data-m="-1" aria-label="Bulan sebelumnya">${ic("left")}</button><b>${BULAN[mo]} ${y}</b><button data-m="1" aria-label="Bulan berikutnya">${ic("right")}</button></div>` : ""}
@@ -1302,7 +1327,12 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
     pg.querySelectorAll("[data-day]").forEach(b => b.onclick = () => openDay(b.dataset.day));
     pg.querySelectorAll("[data-mday]").forEach(b => b.onclick = () => openDay(b.dataset.mday));
     pg.querySelectorAll("[data-dw]").forEach(b => b.onclick = () => { const w = b.dataset.dw, we = iso(addDays(parse(w), 6)); dayEditor(w <= TODAY() && TODAY() <= we ? TODAY() : w); });
-    pg.querySelectorAll(".nm, .mc[data-u]").forEach(b => b.onclick = () => cellSheet(b.dataset.d, b.dataset.u));
+    pg.querySelectorAll(".nm, .mc[data-u]").forEach(b => b.onclick = e => { if (adm && !st.guest && (e.ctrlKey || e.metaKey || e.shiftKey)) { e.preventDefault(); return quickSet(b.dataset.d, b.dataset.u, e); } cellSheet(b.dataset.d, b.dataset.u); });
+    pg.querySelectorAll("[data-agd]").forEach(b => b.onclick = e => { e.stopPropagation(); agendaSheet(b.dataset.agd); });
+    pg.querySelectorAll("[data-cpa]").forEach(b => b.onclick = e => { e.stopPropagation(); copyShiftSheet(b.dataset.cpa); });
+    if ($("#cpAll")) $("#cpAll").onclick = () => copyShiftSheet("all");
+    pg.querySelectorAll("[data-fin]").forEach(b => b.onclick = () => finalizeWeek(b.dataset.fin));
+    pg.querySelectorAll("[data-reop]").forEach(b => b.onclick = () => finalizeWeek(b.dataset.reop, true));
     pg.querySelectorAll(".cal .d[data-cd]").forEach(b => b.onclick = () => cellSheet(b.dataset.cd, meU()));
     if ($("#cpw")) $("#cpw").onclick = copyPrevWeek;
     if ($("#dedit")) $("#dedit").onclick = () => dayEditor(jm === "day" ? st.jday : jm === "month" ? (TODAY().slice(0, 7) === iso(new Date(y, mo, 1)).slice(0, 7) ? TODAY() : iso(new Date(y, mo, 1))) : (st.jweek <= TODAY() && TODAY() <= iso(addDays(parse(st.jweek), 6)) ? TODAY() : st.jweek));
@@ -1349,21 +1379,23 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
     const names = list.filter(m => { const a = A(ds, m.username); return a && Math.min(a.s, 3) === k; });
     names.sort((x, y) => { const a = A(ds, x.username), b = A(ds, y.username); return (a.st === "O" || a.st === "C") - (b.st === "O" || b.st === "C"); });
     return { out: !inRange, html: names.map(m => { const a = A(ds, m.username); const cls = [a.s === 4 && a.st !== "O" && a.st !== "C" ? "k4" : a.st === "N" ? "" : a.st, m.username === meU() ? "me" : ""].join(" ");
-      return `<button class="nm ${cls}" data-d="${ds}" data-u="${m.username}" title="${esc(m.surname)} · ${esc(statusText(a, ds, m))}">${rqMark(ds, m.username, a)}<span class="nmt">${esc(m.surname)}${a.s === 4 ? " · S4" : ""}${(a.st === "L" || a.st === "P") && dow(parse(ds)) !== 5 ? (a.s === 3 ? " ·2L" : a.s === 1 ? " ·+" + String(+(otMinutes(ds, a) / 60).toFixed(1)).replace(".", ",") + "j" : "") : ""}</span>${a.st === "O" && dow(parse(ds)) < 5 && (() => { const sun = iso(wkStart(parse(ds))); return worked(A(sun, m.username)) && compOff(sun, m.username) === ds; })() ? `<b class="rqb sw" title="Libur pengganti masuk Minggu">⇄</b>` : ""}<i>${esc(m.kode || "")}</i>${a.a ? `<b class="why" title="Alasan: ${esc(a.a)}">!</b>` : ""}</button>`; }).join("") };
+      return `<button class="nm ${cls}" data-d="${ds}" data-u="${m.username}" title="${esc(m.surname)} · ${esc(statusText(a, ds, m))}">${rqMark(ds, m.username, a)}<span class="nmt">${esc(m.surname)}${a.s === 4 ? " · S4" : ""}${(a.st === "L" || a.st === "P") && dow(parse(ds)) !== 5 ? (a.s === 3 ? " ·2L" : a.s === 1 ? " ·+" + String(+(otMinutes(ds, a) / 60).toFixed(1)).replace(".", ",") + "j" : "") : ""}</span>${a.st === "O" && (a.pg || (dow(parse(ds)) < 5 && (() => { const sun = iso(wkStart(parse(ds))); return worked(A(sun, m.username)) && compOff(sun, m.username) === ds; })())) ? `<b class="rqb sw" title="Libur pengganti masuk Minggu${a.pg ? " " + fmtDM(a.pg) : ""}">⇄</b>` : ""}<i>${esc(m.kode || "")}</i>${a.a ? `<b class="why" title="Alasan: ${esc(a.a)}">!</b>` : ""}</button>`; }).join("") };
   }
-  function boardHTML(days, forExport) {
-    const td = TODAY(), isSun = d => parse(d).getDay() === 0;
+  function boardHTML(days, forExport, opts) {
+    opts = opts || {}; const td = TODAY(), isSun = d => parse(d).getDay() === 0, canEd = !forExport && lvl() >= 2 && !st.guest;
+    const agHTML = d => { const ag = st.agenda && st.agenda[d]; return ag ? `<div class="agn" ${forExport ? "" : `data-agd="${d}" role="button" tabindex="0"`} title="${esc(ag.t)}">📌 ${esc(ag.t)}</div>` : canEd ? `<button class="agn-add" data-agd="${d}" title="Tambah note / agenda">+ note</button>` : ""; };
+    const cpBtn = g => opts.cp && canEd ? ` <button class="cpb" data-cpa="${g}" title="Copy shift ${g}">${ic("copy", 14)}</button>` : "";
     const teams = TEAMS.filter(t => teamMembers(t.id).length);
     const grpTeams = g => teams.filter(t => t.grp === g);
     let h = `<div class="board-wrap ${forExport ? "x" : ""}"><table class="board"><thead><tr><th class="lbl">Tanggal</th>`;
-    days.forEach(d => { const w = parse(d).getDay(); const hl = holOf(d); h += `<th colspan="3" class="dh ${w === 6 ? "sat" : w === 0 ? "sun" : ""} ${hl ? "hol" : ""} ${d === td && !forExport ? "today" : ""}"><button data-day="${d}" title="${hl ? esc(hl.n) + " · " : ""}Lihat harian">${days.length > 1 ? fmtLong(d).replace(/ \d{4}$/, "") : fmtLong(d)}${w === 6 && d >= SAT_BASE && st.members.some(isGrup) ? ` <small class="gturn">· Grup ${satTurn(d)}</small>` : ""}${hl ? `<small class="holn">${esc(hl.n)}</small>` : ""}</button></th>`; });
+    days.forEach(d => { const w = parse(d).getDay(); const hl = holOf(d); h += `<th colspan="3" class="dh ${w === 6 ? "sat" : w === 0 ? "sun" : ""} ${hl ? "hol" : ""} ${d === td && !forExport ? "today" : ""}"><button data-day="${d}" title="${hl ? esc(hl.n) + " · " : ""}Lihat harian">${days.length > 1 ? fmtLong(d).replace(/ \d{4}$/, "") : fmtLong(d)}${w === 6 && d >= SAT_BASE && st.members.some(isGrup) ? ` <small class="gturn">· Grup ${satTurn(d)}</small>` : ""}${hl ? `<small class="holn">${esc(hl.n)}</small>` : ""}</button>${agHTML(d)}</th>`; });
     h += `</tr><tr><th class="lbl">Shift</th>${days.map(() => `<th>Shift 1</th><th>Shift 2</th><th>Shift 3</th>`).join("")}</tr></thead><tbody>`;
     teams.forEach(t => {
       const g = t.grp, gl = g ? grpTeams(g) : [], first = g && gl[0] === t, rows = g ? 1 + 2 * (gl.length - 1) : 1;
       const gNames = g ? gl.flatMap(x => teamMembers(x.id)) : [];
-      if (t.band) h += `<tr><td class="lbl">Area</td>${days.map(() => `<td colspan="3" class="tt t-p3a">${t.band}</td>`).join("")}</tr>`;
+      if (t.band) h += `<tr><td class="lbl">Area${cpBtn(t.band)}</td>${days.map(() => `<td colspan="3" class="tt t-p3a">${t.band}</td>`).join("")}</tr>`;
       if (t.title) {
-        h += `<tr><td class="lbl">${t.area ? "Area" : "Tim"}</td>`;
+        h += `<tr><td class="lbl">${t.area ? "Area" + cpBtn(t.grp) : "Tim"}</td>`;
         days.forEach(d => {
           if (isSun(d) && g && !t.area) { if (first) h += `<td colspan="3" class="tt ${GRP_CLS[g]}">${g}</td>`; return; }   // Minggu: per area, tanpa tim
           h += `<td colspan="3" class="tt ${t.cls}">${t.title}</td>`;
@@ -1384,7 +1416,7 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
   // papan bulanan versi template mingguan: minggu-minggu dalam bulan, ditumpuk
   function monthDraftHTML(y, mo, forExport) {
     return monthWeeks(y, mo).map(w => { const we = iso(addDays(parse(w), 6)), fin = isFinal(w);
-      return `<div class="mwk"><div class="mwk-h"><b>${fmtDM(w)} – ${fmtDM(we)}</b><span class="pill ${fin ? "ok" : "wait"}">${fin ? "Final" : "Draft"}</span>${forExport ? "" : `${lvl() >= 2 && !st.guest ? `<button class="btn sm ghost atur" data-dw="${w}">${ic("edit", 16)}Atur per hari</button>` : ""}<button class="lnk" data-gw="${w}">Buka mingguan ›</button>`}</div>${boardHTML(weekDays(w), forExport)}</div>`; }).join("");
+      return `<div class="mwk"><div class="mwk-h"><b>${fmtDM(w)} – ${fmtDM(we)}</b><span class="pill ${fin ? "ok" : "wait"}">${fin ? "Final" : "Draft"}</span>${forExport ? "" : `${lvl() >= 2 && !st.guest ? (fin ? `<button class="btn sm ghost wkb" data-reop="${w}">Buka lagi</button>` : `<button class="btn sm ok wkb" data-fin="${w}">${ic("send", 14)}Submit</button>`) : ""}`}${forExport ? "" : `${lvl() >= 2 && !st.guest ? `<button class="btn sm ghost atur" data-dw="${w}">${ic("edit", 16)}Atur per hari</button>` : ""}<button class="lnk" data-gw="${w}">Buka mingguan ›</button>`}</div>${boardHTML(weekDays(w), forExport, { cp: true })}</div>`; }).join("");
   }
   // ---------- drag & drop nama di papan (Admin) — pindah shift di hari yang sama ----------
   function enableDnD(root) {
@@ -1493,10 +1525,10 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
   }
   function monthHTML(y, mo, forExport) {
     const n = new Date(y, mo + 1, 0).getDate(), days = Array.from({ length: n }, (_, i) => iso(new Date(y, mo, i + 1))), td = TODAY();
-    let h = `<div class="board-wrap mon ${forExport ? "x" : ""}"><table class="board month"><thead><tr><th class="lbl mn" rowspan="2">Nama</th>${days.map(d => { const w = parse(d).getDay(); const hl = holOf(d); return `<th class="md ${w === 0 ? "sun" : w === 6 ? "sat" : ""} ${hl ? "hol" : ""} ${d === td && !forExport ? "today" : ""}" ${hl ? `title="${esc(hl.n)}"` : ""}>${forExport ? parse(d).getDate() : `<button class="mdb" data-mday="${d}" title="${hl ? esc(hl.n) + " · " : ""}${fmtLong(d)} — atur per hari">${parse(d).getDate()}</button>`}</th>`; }).join("")}</tr>
+    let h = `<div class="board-wrap mon ${forExport ? "x" : ""}"><table class="board month"><thead><tr><th class="lbl mn" rowspan="2">Nama</th>${days.map(d => { const w = parse(d).getDay(); const hl = holOf(d); return `<th class="md ${w === 0 ? "sun" : w === 6 ? "sat" : ""} ${hl ? "hol" : ""} ${d === td && !forExport ? "today" : ""}" ${hl ? `title="${esc(hl.n)}"` : ""}>${forExport ? parse(d).getDate() : `<button class="mdb ${st.agenda && st.agenda[d] ? "hasag" : ""}" data-mday="${d}" title="${hl ? esc(hl.n) + " · " : ""}${st.agenda && st.agenda[d] ? "📌 " + esc(st.agenda[d].t) + " · " : ""}${fmtLong(d)} — atur per hari">${parse(d).getDate()}</button>`}</th>`; }).join("")}</tr>
       <tr>${days.map(d => { const w = parse(d).getDay(); return `<th class="mw ${w === 0 ? "sun" : w === 6 ? "sat" : ""} ${LIBUR[d] ? "hol" : ""}">${forExport ? HRS[w] : `<button class="mdb" data-mday="${d}">${HRS[w]}</button>`}</th>`; }).join("")}</tr></thead><tbody>`;
     payGroups().forEach(g => {
-      h += `<tr class="msec"><td class="lbl mn">${g.extra ? "Non-payroll" : "Plant " + esc(g.id)}</td><td colspan="${n}"></td></tr>`;
+      h += `<tr class="msec"><td class="lbl mn">${g.extra ? "Non-payroll" : "Plant " + esc(g.id)}${!g.extra && !forExport && lvl() >= 2 && !st.guest ? ` <button class="cpb" data-cpa="P${esc(g.id)}" title="Copy shift P${esc(g.id)}">${ic("copy", 14)}</button>` : ""}</td><td colspan="${n}"></td></tr>`;
       g.list.forEach(m => {
         h += `<tr><td class="lbl mn ${m.username === meU() ? "me" : ""}"><b>${esc(m.surname)}</b><small>${esc(m.noReg)}</small></td>`;
         days.forEach(d => { const a = A(d, m.username), c = payCode(d, a, m), p = pendReq(d, m.username);
@@ -1517,7 +1549,9 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
       <div class="stats" style="margin-top:6px"><div class="stat"><b>${s.work}<small>hari</small></b><p>Hari kerja ${BULAN[mo]}</p></div><div class="stat"><b>${s.wd + s.sat + s.sun}<small>hari</small></b><p>Lembur (biasa ${s.wd} · Sabtu ${s.sat} · Minggu ${s.sun})</p></div></div>`;
   }
   // ---- tukar libur Minggu: masuk Minggu ↔ libur pengganti Senin–Jumat berikutnya ----
-  function compOff(sun, u) { for (let i = 1; i <= 5; i++) { const ds = iso(addDays(parse(sun), i)), a = A(ds, u); if (a && a.st === "O") return ds; } return null; }
+  // libur pengganti Minggu: pasangan yang diatur manual (kolom Pengganti) diutamakan, selain itu off pertama Senin–Jumat berikutnya
+  function pairedOff(sun, u) { for (let i = -14; i <= 42; i++) { const ds = iso(addDays(parse(sun), i)), a = A(ds, u); if (a && a.st === "O" && a.pg === sun) return ds; } return null; }
+  function compOff(sun, u) { const p = pairedOff(sun, u); if (p) return p; for (let i = 1; i <= 5; i++) { const ds = iso(addDays(parse(sun), i)), a = A(ds, u); if (a && a.st === "O" && (!a.pg || a.pg === sun)) return ds; } return null; }
   const worked = a => a && a.st !== "O" && a.st !== "C";
   function swapInfo(ds, u) {
     const d = parse(ds), a = A(ds, u), out = [], sun = iso(wkStart(d));
@@ -1525,13 +1559,106 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
     if (dow(d) === 6) {
       if (worked(a)) { const c = compOff(ds, u); out.push(c ? `Masuk Minggu ini → <b>libur pengganti ${lbl(c)}</b>` : `Masuk Minggu ini tanpa libur pengganti Senin–Jumat berikutnya → <b>dihitung lembur Minggu</b>`); }
       else if (a && a.st === "O") out.push(`Minggu ini libur${a.rq ? " (permintaan member)" : ""} — tidak ada libur pengganti`);
-    } else if (dow(d) < 5 && a && a.st === "O" && worked(A(sun, u)) && compOff(sun, u) === ds) out.push(`Libur pengganti karena <b>masuk ${lbl(sun)}</b>`);
+    } else if (a && a.st === "O" && a.pg) out.push(`Libur pengganti (diatur) karena <b>masuk ${lbl(a.pg)}</b>`);
+    else if (dow(d) < 5 && a && a.st === "O" && worked(A(sun, u)) && compOff(sun, u) === ds) out.push(`Libur pengganti karena <b>masuk ${lbl(sun)}</b>`);
     // off lebih dari 1x dalam minggu ini (Minggu–Sabtu)
     const offs = weekDays(sun).filter(x => { const b = A(x, u); return b && b.st === "O"; });
     if (offs.length >= 2) out.push(`Off ${offs.length}x minggu ini: ` + offs.map(x => { const b = A(x, u), w = dow(parse(x));
-      const why = w === 6 ? "libur Minggu" : w < 5 && worked(A(sun, u)) && compOff(sun, u) === x ? `pengganti masuk Minggu ${fmtDM(sun)}` : b.rq ? "permintaan member" : "off";
+      const why = w === 6 ? "libur Minggu" : b.pg ? `pengganti masuk Minggu ${fmtDM(b.pg)}` : w < 5 && worked(A(sun, u)) && compOff(sun, u) === x ? `pengganti masuk Minggu ${fmtDM(sun)}` : b.rq ? "permintaan member" : "off";
       return `<b>${lbl(x)}</b> (${why})`; }).join(" · "));
     return out;
+  }
+  // ---- ubah tanggal libur pengganti Minggu (off dipindah ke tanggal pilihan) ----
+  const nearShift = (d, u) => { for (const i of [-1, 1, -2, 2, -3, 3]) { const b = A(iso(addDays(parse(d), i)), u); if (worked(b)) return Math.min(b.s, 3); } return 1; };
+  async function moveCompOff(sun, u) {
+    const m = st.byU[u], cur = compOff(sun, u);
+    const v = await ask(`<h3>Libur pengganti ${esc(m.surname)}</h3><p class="sub">Masuk <b>${fmtLong(sun)}</b>. Libur pengganti sekarang: <b>${cur ? fmtLong(cur) : "belum ada"}</b>.</p>
+      <label class="fld"><span>Pindahkan libur pengganti ke tanggal</span><input class="ctl" type="date" id="mvd" value="${cur || iso(addDays(parse(sun), 1))}"></label>
+      <p class="info-line" id="mvi"></p><p class="err hide" id="mve"></p>
+      <div class="sheet-acts"><button class="btn ghost" data-close>Batal</button><button class="btn pri" data-ok>Pindahkan</button></div>`, s => {
+        const d = $("#mvd", s).value, b = A(d, u), e = $("#mve", s), bad = t => { e.textContent = t; e.classList.remove("hide"); return false; };
+        if (!d) return bad("Pilih tanggal."); if (d === cur) return bad("Tanggal sama dengan libur pengganti sekarang.");
+        if (!b) return bad("Jadwal tanggal itu belum ada / belum dimuat."); if (b.st === "O" || b.st === "C") return bad("Tanggal itu sudah off / cuti. Pilih hari masuk.");
+        return d; });
+    if (!v) return;
+    const b = A(v, u), cells = [{ d: v, u, s: Math.min(b.s, 3), st: "O", pg: sun, rq: false }];
+    if (cur) cells.push({ d: cur, u, s: Math.min(b.s, 3) || nearShift(cur, u), st: "N", rq: false });
+    let why = ""; if (cells.some(c => isUrgent(c.d, A(c.d, u), c, m))) { why = await askReason("Alasan perubahan mendadak", "Ada tanggal yang kurang dari 24 jam lagi."); if (!why) return; }
+    closeSheet(); saveCells(cells, `Libur pengganti ${m.surname} dipindah ke ${fmtDM(v)}${cur ? ` (${fmtDM(cur)} jadi masuk Shift ${cells[1].s})` : ""}.`, why);
+  }
+  // ---- klik cepat di komputer: Ctrl = lembur, Shift = off, Ctrl+Shift = cuti/ijin (klik lagi = kembali masuk) ----
+  async function quickSet(ds, u, e) {
+    const m = st.byU[u], a = A(ds, u), w = dow(parse(ds)), sat = w === 5; if (!m) return;
+    const s0 = a ? Math.min(a.s, 3) : 1, mode = (e.ctrlKey || e.metaKey) && e.shiftKey ? "C" : (e.ctrlKey || e.metaKey) ? "OT" : "O";
+    let c;
+    if (mode === "C" || mode === "O") c = a && a.st === mode ? { st: sat && isOp(m) ? "S" : "N", s: s0 } : { st: mode, s: s0 };
+    else {
+      const isOT = a && (a.st === "L" || a.st === "P" || (sat && a.st === "S"));
+      if (isOT) c = { st: sat && isOp(m) ? "N" : "N", s: s0 };
+      else if (sat) { if (!(isOp(m) || sat3(m))) return toast(`${m.surname}: tidak ada lembur Sabtu (AM / Adit / leader Grup).`); c = { st: "S", s: s0 }; }
+      else if (s0 === 1) c = { st: "L", s: 1, o: "|19.30" };
+      else if (s0 === 3) c = { st: "L", s: 3 };
+      else return toast("Shift 2 tidak punya lembur. Ubah ke Shift 1 atau Shift 3 dulu.");
+    }
+    const cell = { d: ds, u, s: c.s, st: c.st, o: c.o || "", rq: false };
+    let why = ""; if (isUrgent(ds, a, cell, m)) { why = await askReason("Alasan perubahan mendadak", `${esc(m.surname)} · ${fmtLong(ds)} — kurang dari 24 jam sebelum shift.`); if (!why) return; }
+    saveCells([cell], `${m.surname} ${fmtDM(ds)}: ${statusText({ s: c.s, st: c.st, o: c.o }, ds, m)}.`, why);
+  }
+  // ---- note / agenda per tanggal ----
+  async function agendaSheet(d) {
+    const ag = st.agenda && st.agenda[d];
+    if (lvl() < 2 || st.guest) { sheet(`<h3>Agenda ${fmtShort(d)}</h3><p class="sub" style="white-space:pre-wrap">${ag ? esc(ag.t) : "Tidak ada agenda."}</p>${ag && ag.by ? `<p class="hint" style="text-align:left">Ditulis ${esc(ag.by)}</p>` : ""}<div class="sheet-acts"><button class="btn pri" data-close>Tutup</button></div>`); return; }
+    const v = await ask(`<h3>Note / agenda</h3><p class="sub">${fmtLong(d)}${holOf(d) ? " · " + esc(holOf(d).n) : ""}</p>
+      <label class="fld"><span>Agenda di tanggal ini (tampil di atas kolom tanggal)</span><textarea class="ctl" id="agt" maxlength="300" rows="3" placeholder="Contoh: Audit IATF 08.00, Overhaul furnace">${ag ? esc(ag.t) : ""}</textarea></label>
+      <div class="sheet-acts">${ag ? `<button class="btn ghost" id="agDel">Hapus</button>` : `<button class="btn ghost" data-close>Batal</button>`}<button class="btn pri" data-ok>Simpan</button></div>`,
+      s => ({ t: $("#agt", s).value.trim() }), s => { const b = $("#agDel", s); if (b) b.onclick = () => { $("#agt", s).value = ""; s.querySelector("[data-ok]").click(); }; });
+    if (!v) return;
+    const text = v.t;
+    try { const r = await api("saveAgenda", { d, text }); st.agenda = st.agenda || {}; if (r.agenda) st.agenda[d] = r.agenda; else delete st.agenda[d]; render(); toast(text ? "Note tersimpan." : "Note dihapus."); } catch (e) { toast(e.message); }
+  }
+  // ---- copy shift (bulanan): hari → hari lain, minggu → minggu lain; per area atau semua ----
+  function adaptCell(a, tgt, m) {
+    const sat = dow(parse(tgt)) === 5; let st2 = a.st, s2 = Math.min(a.s, sat ? 4 : 3), o = a.o || "";
+    if (sat) { if (st2 === "L" || st2 === "P") st2 = isOp(m) ? "S" : "N"; }
+    else { if (st2 === "S") st2 = "N"; if (st2 === "P") { st2 = "L"; o = "|17.30"; } }
+    if (st2 !== "L") o = "";
+    return { s: s2, st: st2, o };
+  }
+  async function copyShiftSheet(area0) {
+    const [y, mo] = st.jmonth, weeks = monthWeeks(y, mo), first = iso(new Date(y, mo, 1)), last = iso(new Date(y, mo + 1, 0));
+    const allW = [iso(addDays(parse(weeks[0]), -7))].concat(weeks), days = []; for (let d = parse(first); iso(d) <= last; d = addDays(d, 1)) days.push(iso(d));
+    const S = { area: area0 || "all", mode: "day", src: TODAY() >= first && TODAY() <= last ? TODAY() : first, tg: new Set(), wsrc: allW[0], wtg: new Set() };
+    const s = sheet(`<div id="cpb"></div>`);
+    const people = () => st.members.filter(m => S.area === "all" || grpOf(m) === S.area);
+    const plan = () => { const out = [], pairs = S.mode === "day" ? [...S.tg].map(t => [[S.src, t]]) : [...S.wtg].map(w => weekDays(S.wsrc).map((d, i) => [d, weekDays(w)[i]]));
+      pairs.flat().forEach(([src, tgt]) => { if (src === tgt) return; people().forEach(m => { const a = A(src, m.username); if (!a) return; const c = adaptCell(a, tgt, m), b = A(tgt, m.username);
+        if (b && b.s === c.s && b.st === c.st && (b.o || "") === c.o) return; out.push({ d: tgt, u: m.username, s: c.s, st: c.st, o: c.o, rq: false }); }); });
+      return out; };
+    const draw = () => { const n = plan().length;
+      $("#cpb", s).innerHTML = `<h3>Copy shift</h3><p class="sub">${BULAN[mo]} ${y} · salin jadwal ${S.area === "all" ? "semua member (P3A, P3B & leader)" : "area " + S.area}.</p>
+        <p class="lbl-s">Area</p><div class="mini-seg"><button data-ca="all" class="${S.area === "all" ? "on" : ""}">Semua</button><button data-ca="P3A" class="${S.area === "P3A" ? "on" : ""}">P3A</button><button data-ca="P3B" class="${S.area === "P3B" ? "on" : ""}">P3B</button></div>
+        <p class="lbl-s">Salin</p><div class="mini-seg"><button data-cm="day" class="${S.mode === "day" ? "on" : ""}">Hari → hari lain</button><button data-cm="week" class="${S.mode === "week" ? "on" : ""}">Minggu → minggu lain</button></div>
+        ${S.mode === "day" ? `<label class="fld"><span>Hari sumber</span><input class="ctl" type="date" id="cps" value="${S.src}"></label>
+          <p class="lbl-s">Hari tujuan <button class="lnk" id="cpSame" style="margin:0 0 0 8px">pilih semua hari ${HARI[dow(parse(S.src))]}</button><button class="lnk" id="cpClr" style="margin:0 0 0 8px">kosongkan</button></p>
+          <div class="cp-days">${days.map(d => `<button data-ct="${d}" class="${S.tg.has(d) ? "on" : ""} ${d === S.src ? "src" : ""} ${isRed(d) ? "red" : ""}" ${d === S.src ? "disabled" : ""}><small>${HRS[parse(d).getDay()]}</small>${parse(d).getDate()}</button>`).join("")}</div>`
+        : `<label class="fld"><span>Minggu sumber</span><select class="ctl" id="cpw">${allW.map(w => `<option value="${w}" ${w === S.wsrc ? "selected" : ""}>${fmtDM(w)} – ${fmtDM(iso(addDays(parse(w), 6)))}${isFinal(w) ? " ✓" : ""}</option>`).join("")}</select></label>
+          <p class="lbl-s">Minggu tujuan</p><div class="cp-wk">${weeks.map(w => `<button data-cw="${w}" class="${S.wtg.has(w) ? "on" : ""}" ${w === S.wsrc ? "disabled" : ""}>${fmtDM(w)} – ${fmtDM(iso(addDays(parse(w), 6)))}${isFinal(w) ? " ✓" : ""}</button>`).join("")}</div>`}
+        <p class="info-line"><b>${n}</b> sel akan diubah. Lembur disesuaikan hari tujuan (Sabtu ↔ hari biasa); jam lembur Shift 1 ikut tersalin.</p><p class="err hide" id="cpe"></p>
+        <div class="sheet-acts"><button class="btn ghost" data-close>Batal</button><button class="btn pri" id="cpGo" ${n ? "" : "disabled"}>${ic("copy", 18)}Salin ${n} sel</button></div>`;
+      s.querySelectorAll("[data-ca]").forEach(b => b.onclick = () => { S.area = b.dataset.ca; draw(); });
+      s.querySelectorAll("[data-cm]").forEach(b => b.onclick = () => { S.mode = b.dataset.cm; draw(); });
+      s.querySelectorAll("[data-ct]").forEach(b => b.onclick = () => { S.tg.has(b.dataset.ct) ? S.tg.delete(b.dataset.ct) : S.tg.add(b.dataset.ct); draw(); });
+      s.querySelectorAll("[data-cw]").forEach(b => b.onclick = () => { S.wtg.has(b.dataset.cw) ? S.wtg.delete(b.dataset.cw) : S.wtg.add(b.dataset.cw); draw(); });
+      if ($("#cps", s)) $("#cps", s).onchange = () => { S.src = $("#cps", s).value || S.src; S.tg.delete(S.src); draw(); };
+      if ($("#cpw", s)) $("#cpw", s).onchange = () => { S.wsrc = $("#cpw", s).value; S.wtg.delete(S.wsrc); draw(); };
+      if ($("#cpSame", s)) $("#cpSame", s).onclick = () => { const w = parse(S.src).getDay(); days.forEach(d => { if (d !== S.src && parse(d).getDay() === w) S.tg.add(d); }); draw(); };
+      if ($("#cpClr", s)) $("#cpClr", s).onclick = () => { S.tg.clear(); draw(); };
+      $("#cpGo", s).onclick = async () => { const cells = plan(); if (!cells.length) return;
+        let why = ""; if (cells.some(c => isUrgent(c.d, A(c.d, c.u), c, st.byU[c.u]))) { why = await askReason("Alasan perubahan mendadak", "Sebagian tanggal tujuan kurang dari 24 jam lagi."); if (!why) return; }
+        closeSheet(); saveCells(cells, `${cells.length} sel disalin (${S.area === "all" ? "semua" : S.area}).`, why); };
+    };
+    try { await loadRange(allW[0] < st.range[0] ? allW[0] : st.range[0], st.range[1]); } catch (e) { }
+    draw();
   }
   // ---- detail / ubah satu sel ----
   function optionsFor(ds, m) {
@@ -1556,7 +1683,8 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
         : cur.st === "L" && !satDay && cur.s === 3 ? `<div class="ot-box"><p class="ot-sum"><b>Shift 2 long</b> 19.30–07.30 · lembur <b>3 jam</b><br><small>Istirahat 23.30–00.30 &amp; 03.30–04.30 tidak dihitung lembur.</small></p></div>`
         : cur.st === "L" && !satDay && cur.s === 2 ? `<div class="ot-box"><p class="ot-sum">Shift 2 tidak punya aturan lembur. Pilih Shift 1 (lembur awal/akhir) atau Shift 3 (menjadi Shift 2 long).</p></div>` : "";
       return `<h3>${esc(m.surname)} <span class="pill ${ROLE_CLS[m.otoritas] || "mb"}" style="vertical-align:middle">${esc(m.jabatan || m.otoritas)}</span></h3>
-      <p class="sub">${fmtLong(ds)}${fin ? " · <b>minggu final</b>" : ""}<br><b>${esc(statusText(a, ds, m))}</b>${a && a.st !== "O" && a.st !== "C" ? " · " + esc(hours(ds, a, m)) + " WIB" : ""}${(() => { const sw = swapInfo(ds, u); return sw.length ? `<span class="swap-box">${ic("swap", 16)}<span>${sw.join("<br>")}</span></span>` : ""; })()}${a && a.n ? `<br>Catatan: ${esc(a.n)}` : ""}${a && a.a ? `<br><span class="why-t">Alasan perubahan: ${esc(a.a)}</span>` : ""}${p ? `<br><span class="pill wait">Pengajuan menunggu: ${esc(p.Jenis)}</span>` : a && a.rq ? `<br><span class="pill yes">Permintaan member</span>` : ""}</p>
+      <p class="sub">${fmtLong(ds)}${fin ? " · <b>minggu final</b>" : ""}<br><b>${esc(statusText(a, ds, m))}</b>${a && a.st !== "O" && a.st !== "C" ? " · " + esc(hours(ds, a, m)) + " WIB" : ""}${(() => { const sw = swapInfo(ds, u), sun = dow(parse(ds)) === 6 && worked(a) ? ds : a && a.st === "O" ? (a.pg || ((() => { const su = iso(wkStart(parse(ds))); return worked(A(su, u)) && compOff(su, u) === ds ? su : ""; })())) : "";
+          return sw.length || (adm && sun) ? `<span class="swap-box">${ic("swap", 16)}<span>${sw.join("<br>")}${adm && sun ? `${sw.length ? "<br>" : ""}<button class="lnk" data-mvoff="${sun}" style="margin:4px 0 0">Ubah tanggal libur pengganti ›</button>` : ""}</span></span>` : ""; })()}${a && a.n ? `<br>Catatan: ${esc(a.n)}` : ""}${a && a.a ? `<br><span class="why-t">Alasan perubahan: ${esc(a.a)}</span>` : ""}${p ? `<br><span class="pill wait">Pengajuan menunggu: ${esc(p.Jenis)}</span>` : a && a.rq ? `<br><span class="pill yes">Permintaan member</span>` : ""}</p>
       ${adm ? `<p class="lbl-s">Shift</p><div class="opt-grid" id="osh">${o.sh.map(([v, l, x]) => `<button data-s="${v}" class="${String(cur.s) === v ? "on" : ""}">${l}${x ? `<small>${x}</small>` : ""}</button>`).join("")}</div>
         <p class="lbl-s">Status</p><div class="opt-grid" id="ost">${o.stt.map(([v, l, x]) => `<button data-st="${v}" class="${cur.st === v ? "on" : ""}">${v === "L" && !satDay && cur.s === 3 ? "Shift 2 long" : l}${x ? `<small>${x}</small>` : ""}</button>`).join("")}</div>${otP}
         <label class="chk"><input type="checkbox" id="crq" ${cur.rq ? "checked" : ""}> Tandai sebagai permintaan member</label>
@@ -1567,6 +1695,7 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
         : `<div class="sheet-acts"><button class="btn ghost" data-close>Tutup</button>${u === meU() && !st.guest ? `<button class="btn pri" id="creq">Ajukan perubahan</button>` : ""}</div>`}`;
     };
     const s = sheet(draw());
+    s.addEventListener("click", e => { const b = e.target.closest("[data-mvoff]"); if (b) { e.preventDefault(); moveCompOff(b.dataset.mvoff, u); } });
     const redraw = () => { if ($("#cwhy", s)) cur.why = $("#cwhy", s).value; cur.rq = $("#crq", s) ? $("#crq", s).checked : cur.rq; s.innerHTML = `<div class="grab"></div>` + draw(); bind(); };
     const bind = () => {
       s.querySelectorAll("[data-s]").forEach(b => b.onclick = () => { cur.s = Number(b.dataset.s); if (cur.s === 4 && cur.st === "S") cur.st = "N"; cur.o = cur.st === "L" && cur.s === 1 ? (cur.o && cur.o !== "|" ? cur.o : "|19.30") : ""; redraw(); });
@@ -1587,7 +1716,7 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
   }
   async function saveCells(cells, msg, alasan) {
     const prev = cells.map(c => ({ c, old: A(c.d, c.u) }));
-    cells.forEach(c => { const o = A(c.d, c.u); (st.sched[c.d] || (st.sched[c.d] = {}))[c.u] = { s: c.s, st: c.st, o: c.st === "L" ? (c.o != null ? c.o : o && o.st === c.st && o.s === c.s ? o.o || "" : "") : "", rq: c.rq != null ? c.rq : o && o.rq, n: o ? o.n : "", a: alasan || "" }; });
+    cells.forEach(c => { const o = A(c.d, c.u); (st.sched[c.d] || (st.sched[c.d] = {}))[c.u] = { s: c.s, st: c.st, pg: c.st === "O" ? (c.pg != null ? c.pg : o && o.st === "O" ? o.pg || "" : "") : "", o: c.st === "L" ? (c.o != null ? c.o : o && o.st === c.st && o.s === c.s ? o.o || "" : "") : "", rq: c.rq != null ? c.rq : o && o.rq, n: o ? o.n : "", a: alasan || "" }; });
     render(); setSync("busy");
     try { await api("setCells", { cells, alasan: alasan || "" }); setSync("ok"); toast(msg || "Jadwal tersimpan ke Google Sheets."); }
     catch (e) {
@@ -1938,7 +2067,8 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
     sheet(`<h3>Panduan aplikasi Shift P3</h3><p class="sub">Versi ${APP_VERSION}. Panduan lengkap (PDF) bisa diminta ke Super Admin.</p>
       ${sec("1. Masuk & ganti password", `<ol class="steps"><li>Username = nama panggilan (contoh <b>katoni</b>).</li><li>Password awal diberikan Super Admin. Saat login pertama wajib membuat password baru (min. 6 karakter).</li><li>Lupa password: minta Super Admin menekan <b>Reset password</b>.</li><li>Belum punya akun: <b>Masuk sebagai tamu</b> › <b>Minta akun</b>.</li></ol>`, true)}
       ${sec("Dashboard (v0.4)", `<ol class="steps"><li>Kartu biru: ketuk <b>Shift 1/2/3</b> untuk melihat semua orang di shift itu, lengkap dengan jabatan, tim, dan jam. Ketuk <b>Off · Cuti</b> untuk daftar yang libur.</li><li><b>Geser kartu ke kiri/kanan</b> (atau tombol ‹ ›, atau ketuk tanggal di "7 hari ke depan") untuk melihat siapa yang masuk besok sampai 6 hari ke depan.</li><li>Tombol <b>Semua / P3A / P3B</b> memisahkan area. Titik kuning = P3A, oranye = P3B, biru = leader.</li><li>Kotak ringkasan periode (hari kerja, lembur hari biasa, overtime Sabtu, lembur Minggu, shift malam, off, cuti) bisa diketuk untuk melihat tanggal-tanggalnya; ketuk tanggal untuk membuka jadwal hari itu.</li></ol>`)}
-      ${sec("Baru di v0.7", `<ol class="steps"><li><b>Zoom</b> papan bulanan/mingguan/harian: tombol − 100% +, cubit dua jari, atau Ctrl + scroll di komputer.</li><li>Setelah mengisi/mengubah jadwal, tampilan <b>tetap di posisi terakhir</b> (tidak kembali ke kiri).</li><li>Kartu pengajuan dan notifikasi punya tombol <b>Lihat di jadwal</b> → langsung ke hari itu dan nama disorot.</li><li><b>Tukar off</b>: pindahkan hari off ke tanggal lain (boleh ke periode sebelum/sesudah). Batas per periode diatur Admin di Request › Persetujuan.</li><li><b>Pengingat shift</b> (Akun › Pengingat shift &amp; notifikasi HP): nyalakan/matikan dan atur berapa lama sebelum jam masuk. Aplikasi Android menampilkannya di layar notifikasi HP walau ditutup; iPhone pakai <b>Tambahkan ke kalender</b>.</li><li><b>Kalender Indonesia</b>: libur nasional &amp; cuti bersama (SKB 3 Menteri 2026–2027) berwarna merah. Dashboard menampilkan <b>Hari kerja kalender</b> periode 20–19 (tanpa Minggu &amp; tanggal merah) dan <b>Masuk tanggal merah</b>.</li><li><b>Lembur dalam jam</b>: Shift 1 lembur awal mulai 05.30 dan/atau lembur akhir mulai 16.00 s.d. maks 01.00 (istirahat 17.30–18.30 tidak dihitung). Shift 3 yang masuk 19.30 menjadi <b>Shift 2 long</b> (19.30–07.30, lembur 3 jam).</li></ol>`, true)}
+      ${sec("Baru di v0.9", `<ol class="steps"><li><b>Note / agenda per tanggal</b> (Admin): ketuk <b>+ note</b> di bawah tanggal pada papan mingguan/bulanan. Note tampil sebagai kotak kuning di atas kolom tanggal (tidak menutupi nama) dan di Dashboard.</li><li><b>Klik cepat di komputer</b> (Admin): <b>Ctrl + klik</b> nama = lembur sesuai harinya (Shift 1 lembur s/d 19.30, Shift 3 → Shift 2 long, Sabtu → overtime), <b>Shift + klik</b> = off, <b>Ctrl + Shift + klik</b> = cuti/ijin. Klik lagi dengan tombol yang sama = kembali masuk.</li><li><b>Copy shift</b> di jadwal bulanan: tombol di sebelah tulisan Area (P3A/P3B) atau "Copy shift" (semua). Salin hari → hari lain atau minggu → minggu lain.</li><li><b>Ubah tanggal libur pengganti</b>: ketuk nama di hari Minggu yang masuk (atau di hari off penggantinya) › "Ubah tanggal libur pengganti". Off pindah ke tanggal pilihan; off lama jadi masuk.</li><li><b>Submit final</b> juga ada di jadwal bulanan (tampilan Payroll dan Mingguan).</li></ol>`, true)}
+      ${sec("Baru di v0.7", `<ol class="steps"><li><b>Zoom</b> papan bulanan/mingguan/harian: tombol − 100% +, cubit dua jari, atau Ctrl + scroll di komputer.</li><li>Setelah mengisi/mengubah jadwal, tampilan <b>tetap di posisi terakhir</b> (tidak kembali ke kiri).</li><li>Kartu pengajuan dan notifikasi punya tombol <b>Lihat di jadwal</b> → langsung ke hari itu dan nama disorot.</li><li><b>Tukar off</b>: pindahkan hari off ke tanggal lain (boleh ke periode sebelum/sesudah). Batas per periode diatur Admin di Request › Persetujuan.</li><li><b>Pengingat shift</b> (Akun › Pengingat shift &amp; notifikasi HP): nyalakan/matikan dan atur berapa lama sebelum jam masuk. Aplikasi Android menampilkannya di layar notifikasi HP walau ditutup; iPhone pakai <b>Tambahkan ke kalender</b>.</li><li><b>Kalender Indonesia</b>: libur nasional &amp; cuti bersama (SKB 3 Menteri 2026–2027) berwarna merah. Dashboard menampilkan <b>Hari kerja kalender</b> periode 20–19 (tanpa Minggu &amp; tanggal merah) dan <b>Masuk tanggal merah</b>.</li><li><b>Lembur dalam jam</b>: Shift 1 lembur awal mulai 05.30 dan/atau lembur akhir mulai 16.00 s.d. maks 01.00 (istirahat 17.30–18.30 tidak dihitung). Shift 3 yang masuk 19.30 menjadi <b>Shift 2 long</b> (19.30–07.30, lembur 3 jam).</li></ol>`)}
       ${sec("Baru di v0.6", `<ol class="steps"><li>Senin–Jumat Shift 1 ada status <b>Lembur s/d 17.30</b> (2 jam) selain long shift s/d 19.30. Di payroll sama seperti long shift (angka 1, biru); dihitung lembur hari biasa.</li><li>Sabtu jam normal untuk shift leader (mode Normal), Anita, dan Fahtur: <b>5 jam + lembur 3 jam</b> sesuai shift (S1 s/d 15.30, S2 s/d 20.30, S3 s/d 01.30). AM, Adit, dan leader mode Grup tidak termasuk.</li><li>Ketuk nama untuk melihat <b>tukar libur Minggu</b>: masuk Minggu → tanggal libur penggantinya, dan sebaliknya. Bila off lebih dari 1x dalam seminggu, semua tanggal off dan alasannya ditampilkan. Tanda <b>⇄</b> di papan = libur pengganti Minggu.</li></ol>`)}
       ${sec("Baru di v0.5", `<ol class="steps"><li><b>Bulanan › Mingguan</b>: jadwal sebulan ditampilkan dengan template mingguan (Shift 1/2/3 per tim), minggu demi minggu. Tombol <b>Payroll</b> kembali ke format payroll.</li><li><b>Admin</b>: tekan-tahan nama di papan mingguan/harian (di komputer: klik lalu seret), lalu geser ke kolom Shift lain di <b>hari yang sama</b>. Perubahan &lt; 24 jam sebelum shift tetap wajib diberi alasan.</li><li><b>Sabtu leader</b> (menu Member atau Jadwal › Bulanan, Admin/Super Admin): shift leader &amp; Ast. Manager diatur <b>Normal</b> (Sabtu 5 jam, bisa lembur) atau <b>Grup A–D</b> (Sabtu 07.00–15.00 hanya saat giliran: A 21 Nov, B 28 Nov, C 5 Des, D 12 Des, lalu berulang). Setelah disimpan, giliran bisa langsung diterapkan ke jadwal.</li></ol>`)}
       ${sec("2. Melihat jadwal", `<ol class="steps"><li><b>Bulanan</b> = format payroll (angka shift per tanggal). <b>Mingguan</b>/<b>Harian</b> = format draft (Shift 1/2/3 per tim), urutan Minggu → Sabtu. <b>Saya</b> = kalender pribadi.</li><li>Warna: hijau muda = long shift, oranye muda = off, oranye = cuti, hijau terang = overtime Sabtu, ungu = Shift 4 normal.</li><li>Tanda <b class="rqb">R</b> = jadwal dari permintaan member; <b class="rqb p">R</b> = pengajuan masih menunggu; <b class="why">!</b> = perubahan mendadak (ketuk nama untuk melihat alasannya).</li><li>Ketuk nama untuk melihat jam kerja. Tombol <b>Ekspor</b> = Excel / JPG / PDF.</li></ol>`)}
@@ -2130,6 +2260,7 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
       const hol = LIBUR[iso(new Date(y, mo, i))];
       [a, b].forEach(x => { x.font = hol ? Object.assign({}, hf, { bold: true, color: { argb: "FFC00000" } }) : hf; x.alignment = { horizontal: "center", vertical: "middle", textRotation: 90 }; x.fill = fillX(PAY.head); x.border = BORDER; });
       if (hol) a.note = hol.split("|")[1];
+      { const ag = st.agenda && st.agenda[iso(new Date(y, mo, i))]; if (ag) a.note = (hol ? hol.split("|")[1] + " · " : "") + "Agenda: " + ag.t; }
     }
     ws.getRow(5).height = 56.4; ws.getRow(6).height = 31.8;
     let r = 7;
@@ -2169,7 +2300,7 @@ window.APP_IMG = {"welcome": "data:image/webp;base64,UklGRqoTAQBXRUJQVlA4IJ4TAQC
     ws.getCell("B5").value = days.length > 1 ? `${fmtLong(days[0])} – ${fmtLong(days[days.length - 1])}${isFinal(iso(wkStart(parse(days[0])))) ? " · FINAL" : " · DRAFT"}` : fmtLong(days[0]);
     const C0 = i => 2 + i * 3, isSun = d => parse(d).getDay() === 0;
     let r = 7;
-    days.forEach((d, i) => { ws.mergeCells(r, C0(i), r, C0(i) + 2); const x = ws.getCell(r, C0(i)), w = parse(d).getDay(); x.value = fmtLong(d); x.font = { bold: true, color: { argb: w === 0 || w === 6 ? "FFFFFFFF" : "FF000000" } }; x.alignment = { horizontal: "center" }; if (w === 6) x.fill = fillX("00B050"); if (w === 0 || LIBUR[d]) { x.fill = fillX("FF0000"); x.font = { bold: true, color: { argb: "FFFFFFFF" } }; } if (LIBUR[d]) x.value = fmtLong(d) + " — " + LIBUR[d].split("|")[1];
+    days.forEach((d, i) => { ws.mergeCells(r, C0(i), r, C0(i) + 2); const x = ws.getCell(r, C0(i)), w = parse(d).getDay(); x.value = fmtLong(d); x.font = { bold: true, color: { argb: w === 0 || w === 6 ? "FFFFFFFF" : "FF000000" } }; x.alignment = { horizontal: "center" }; if (w === 6) x.fill = fillX("00B050"); if (w === 0 || LIBUR[d]) { x.fill = fillX("FF0000"); x.font = { bold: true, color: { argb: "FFFFFFFF" } }; } if (LIBUR[d]) x.value = fmtLong(d) + " — " + LIBUR[d].split("|")[1]; if (st.agenda && st.agenda[d]) { x.value = (x.value || fmtLong(d)) + "  📌 " + st.agenda[d].t; x.alignment = Object.assign({}, x.alignment || {}, { wrapText: true }); x.note = "Agenda: " + st.agenda[d].t; }
       ["Shift 1", "Shift 2", "Shift 3"].forEach((l, k) => { const y2 = ws.getCell(r + 1, C0(i) + k); y2.value = l; y2.alignment = { horizontal: "center" }; y2.font = { bold: true, size: 10 }; }); });
     ws.getCell(r, 1).value = "Tanggal"; ws.getCell(r + 1, 1).value = "Shift";
     r += 2;
